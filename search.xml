@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>kotlin泛型</title>
+    <url>/2023/12/15/kotlin%E6%B3%9B%E5%9E%8B/</url>
+    <content><![CDATA[<h1 id="泛型"><a href="#泛型" class="headerlink" title="泛型"></a>泛型</h1><h3 id="泛型的基本声明方法"><a href="#泛型的基本声明方法" class="headerlink" title="泛型的基本声明方法"></a>泛型的基本声明方法</h3><p>函数声明泛型</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span><span class="title">maxOf</span><span class="params">(a:<span class="type">T</span>,b:)</span></span>T</span><br></pre></td></tr></table></figure>
+
+<p>类声明泛型</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title class_">List</span>&lt;<span class="type">T</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<p>​                                                  </p>
+<p>使用：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">val</span> max = maxOf&lt;String&gt;(<span class="string">&quot;a&quot;</span>,<span class="string">&quot;d&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> list = List.Cons(<span class="number">1.0</span>,ListNil)</span><br></pre></td></tr></table></figure>
+
+<h3 id="泛型的约束"><a href="#泛型的约束" class="headerlink" title="泛型的约束"></a>泛型的约束</h3><figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 只能将实现了Comparable接口的数据传进来</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">actual</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T : Comparable&lt;T&gt;</span>&gt; <span class="title">maxOf</span><span class="params">(a: <span class="type">T</span>, b: <span class="type">T</span>)</span></span>: T &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">if</span> (a &gt;= b) a <span class="keyword">else</span> b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="泛型的型变"><a href="#泛型的型变" class="headerlink" title="泛型的型变"></a>泛型的型变</h3><ul>
+<li>不变</li>
+</ul>
+<p><strong>Nothing理论上是所有类型的子类</strong>，但这里的Lis<T>和Lis<Nothing>没有任何继承关系。 </p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  	<span class="comment">// 此处会报错</span></span><br><span class="line">    Lis.Cons(<span class="number">1.0</span>,Lis.Ni)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title class_">Lis</span>&lt;<span class="type">T</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">object</span> Ni : Lis&lt;<span class="built_in">Nothing</span>&gt;()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">data</span> <span class="keyword">class</span> <span class="title class_">Cons</span>&lt;<span class="type">T</span>&gt;(<span class="keyword">val</span> head: T, <span class="keyword">val</span> tail: List&lt;T&gt;) : Lis&lt;T&gt;() &#123;</span><br><span class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">toString</span><span class="params">()</span></span>: String &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;<span class="variable">$head</span>,<span class="variable">$tail</span>&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>协变</li>
+</ul>
+<p>协变点</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">operator</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span>List<span class="type">&lt;T&gt;</span>.<span class="title">get</span><span class="params">(index:<span class="type">Int</span>)</span></span>:T</span><br></pre></td></tr></table></figure>
+
+<p>函数返回值类型为泛型参数，这个返回值就叫做协变点。</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// 这里不会报错了</span></span><br><span class="line">    Lis.Cons(<span class="number">1.0</span>,Lis.Ni)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 这里对泛型添加out修饰  实现泛型的协变 Lis&lt;Nothing&gt;成为了Lis&lt;T&gt;的子类。</span></span><br><span class="line"><span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title class_">Lis</span>&lt;<span class="type">out T</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">object</span> Ni : Lis&lt;<span class="built_in">Nothing</span>&gt;()</span><br><span class="line">		<span class="comment">// 这里head的getter返回T 也是一个协变点</span></span><br><span class="line">    <span class="keyword">data</span> <span class="keyword">class</span> <span class="title class_">Cons</span>&lt;<span class="type">T</span>&gt;(<span class="keyword">val</span> head: T, <span class="keyword">val</span> tail: Lis&lt;T&gt;) : Lis&lt;T&gt;() &#123;</span><br><span class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">toString</span><span class="params">()</span></span>: String &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;<span class="variable">$head</span>,<span class="variable">$tail</span>&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>协变小结</strong></p>
+<ol>
+<li>子类Derived兼容父类Base</li>
+<li>生产者Producer<Derived>兼容Producer<Base>.    <strong>能生产子类就能生产父类</strong></li>
+<li>存在协变点的类的泛型参数必须声明为协变或不变</li>
+<li>当泛型类作为泛型参数类实例的生产者时用协变</li>
+</ol>
+<p>生产者是要向外提供一些东西的，这里子类继承父类后会实现父类的方法。泛型如果是协变的，但是需要的地方是父类，又因为里氏替换原则子类可以代替父类（子类继承自父类），所以可以让Class<Son>成为Class<Father>的子类。</p>
+<ul>
+<li>逆变</li>
+</ul>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Comparable</span>&lt;<span class="type">in T</span>&gt; &#123;</span><br><span class="line">    <span class="comment">// 函数参数类型为泛型参数。参数的位置就是逆变点</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">operator</span> <span class="function"><span class="keyword">fun</span> <span class="title">compareTo</span><span class="params">(other: <span class="type">T</span>)</span></span>: <span class="built_in">Int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>比如</p>
+<p>Int是Number的子类，但是能比较Int的不一定能比较Number，所以CompareTo<Number>是CompareTo<Int>的子类。</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 垃圾</span></span><br><span class="line"><span class="keyword">open</span> <span class="keyword">class</span> <span class="title class_">Waste</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 干垃圾</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DryWaste</span> : <span class="type">Waste</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 垃圾桶</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Dustbin</span>&lt;<span class="type">in T : Waste</span>&gt; &#123;</span><br><span class="line">    <span class="comment">// 扔垃圾</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">put</span><span class="params">(t: <span class="type">T</span>)</span></span> &#123;</span><br><span class="line">        println(<span class="string">&quot;put <span class="variable">$t</span>&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">contravariant</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 垃圾桶对象</span></span><br><span class="line">    <span class="keyword">val</span> dustbin: Dustbin&lt;Waste&gt; = Dustbin&lt;Waste&gt;()</span><br><span class="line">    <span class="comment">// 干垃圾桶对象</span></span><br><span class="line">    <span class="keyword">val</span> dryWasteDustbin: Dustbin&lt;DryWaste&gt; = dustbin</span><br><span class="line">    <span class="comment">// 垃圾对象</span></span><br><span class="line">    <span class="keyword">val</span> waste = Waste()</span><br><span class="line">    <span class="comment">// 干垃圾对象 </span></span><br><span class="line">    <span class="keyword">val</span> dryWaste = DryWaste()</span><br><span class="line">    <span class="comment">// 扔垃圾到垃圾桶</span></span><br><span class="line">    dustbin.put(waste)</span><br><span class="line">    <span class="comment">// 扔干垃圾到垃圾桶</span></span><br><span class="line">    dustbin.put(dryWaste)</span><br><span class="line">    <span class="comment">// 扔垃圾到干垃圾桶 这里报错：类型不匹配。要求:DryWaste实际:Waste</span></span><br><span class="line">    dryWasteDustbin.put(waste)</span><br><span class="line">    <span class="comment">// 扔干垃圾到干垃圾桶</span></span><br><span class="line">    dryWasteDustbin.put(dryWaste)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>逆变小结</strong></p>
+<ol>
+<li>子类Derived兼容父类Base</li>
+<li>消费者Consumer.<Base>兼容Consumer<Derived>   <strong>能消费父类就能消费子类</strong></li>
+<li>存在逆变点的类的泛型参数必须声明为逆变或不变</li>
+<li>当泛型类作为泛型参数类实例的消费者时用逆变</li>
+</ol>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>泛型协变的语法规则：<code>&lt;out T&gt;</code> 类似于 Java 的  <code>&lt;? extends Bound&gt;</code>，它限定的类型是当前上边界类或者其子类，如果是接口的话就是当前上边界接口或者实现类，协变的泛型变量只读，不可以写，可以添加 null ，但是没意义</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">open</span> <span class="keyword">class</span> <span class="title class_">Person</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>: <span class="type">Person</span>()</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Teacher</span>: <span class="type">Person</span>()</span><br><span class="line"><span class="comment">// 协变</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SimpleData</span>&lt;<span class="type">out T</span>&gt;&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> person: Person = Student()</span><br><span class="line">    <span class="comment">// 这里可以将SimpleData&lt;Student&gt;()赋值给SimpleData&lt;Person&gt;</span></span><br><span class="line">    <span class="keyword">val</span> personGeneric: SimpleData&lt;Person&gt; = SimpleData&lt;Student&gt;()</span><br><span class="line">    <span class="keyword">val</span> list1: ArrayList&lt;<span class="keyword">out</span> Person&gt; = ArrayList&lt;Student&gt;()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>泛型逆变的语法规则：<code>&lt;in T&gt;</code> 类似于 Java 的 <code>&lt;? super Bound&gt;</code>，它限定的类型是当前<strong>下边界类</strong>或者其父类，如果是接口的话就是当前下边界接口或者其父接口，逆变的泛型变量只能写，不建议读。</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">open</span> <span class="keyword">class</span> <span class="title class_">Person</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>: <span class="type">Person</span>()</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Teacher</span>: <span class="type">Person</span>()</span><br><span class="line"><span class="comment">// 逆变</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SimpleData</span>&lt;<span class="type">in T</span>&gt;&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> person1: Person = Student()</span><br><span class="line">  	<span class="comment">// 这里将SimpleData&lt;Person&gt;()赋值给SimpleData&lt;Student&gt; 必须是Student或Student的父类，比如Student的子类就会报错。</span></span><br><span class="line">    <span class="keyword">val</span> personGeneric1: SimpleData&lt;Student&gt; = SimpleData&lt;Person&gt;()</span><br><span class="line">    <span class="keyword">val</span> list2: ArrayList&lt;<span class="keyword">in</span> Person&gt; = ArrayList&lt;Any&gt;()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>不变的话就是没有对应的子父类关系</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">open</span> <span class="keyword">class</span> <span class="title class_">Person</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>: <span class="type">Person</span>()</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Teacher</span>: <span class="type">Person</span>()</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SimpleData</span>&lt;<span class="type">T</span>&gt;&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> person: Person = Student()</span><br><span class="line">    <span class="comment">//编译器不允许</span></span><br><span class="line">    <span class="keyword">val</span> personGeneric: SimpleData&lt;Person&gt; = SimpleData&lt;Student&gt;()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="泛型的出现是为了解决什么问题"><a href="#泛型的出现是为了解决什么问题" class="headerlink" title="泛型的出现是为了解决什么问题"></a>泛型的出现是为了解决什么问题</h3><ol>
+<li>减少重复代码</li>
+<li>增加编译时类型的检查，避免一些运行时的类型错误问题</li>
+</ol>
+<p>比如往集合中添加元素，可以添加任何类型。但是取得时候不知道类型会报错。</p>
+<p><img src="https://pic1.zhimg.com/80/v2-b1b5b02cad3adceb3514735733af8d14_720w.webp" alt="img"></p>
+<p>如果一只猫是一只动物，那一群猫是一群动物吗？一群狗是一群动物吗？Java数组认为是的。如果Cat是Animal的子类型，那么<code>Cat[]</code>也是<code>Animal[]</code>的子类型，我们称这种性质为<strong>协变</strong>（covariance）。<strong>Java中，数组是协变的</strong>。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>Hello World</title>
+    <url>/2023/12/27/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+</search>
