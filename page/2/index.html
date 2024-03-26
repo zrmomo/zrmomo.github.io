@@ -51,7 +51,7 @@
   isHome: true,
   isHighlightShrink: false,
   isToc: false,
-  postUpdate: '2024-03-26 19:11:07'
+  postUpdate: '2024-03-26 19:22:14'
 }</script><script>(win=>{
       win.saveToLocal = {
         set: (key, value, ttl) => {
@@ -148,53 +148,7 @@
         }
       }
       detectApple()
-    })(window)</script><meta name="generator" content="Hexo 7.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://raw.githubusercontent.com/zrmomo/images/main/image/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">40</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="敲写拾遗"><img class="site-icon" src="https://raw.githubusercontent.com/zrmomo/images/main/image/avatar.png"/><span class="site-name">敲写拾遗</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/26/Android%E6%9E%B6%E6%9E%84%E6%BC%94%E5%8C%96/" title="MVC MVP MVVM MVI">MVC MVP MVVM MVI</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-26T11:10:09.239Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></span></div><div class="content">MVCMVC三层对应的关系：
-
-
-视图层(View) 对应于xml布局文件和java代码动态view部分，控制层(Controller) MVC中Android的控制层是由Activity来承担的，Activity本来主要是作为初始化页面，展示数据的操作，但是因为XML视图功能太弱，所以Activity既要负责视图的显示又要加入控制逻辑，承担的功能过多。模型层(Model) 针对业务模型，建立的数据结构和相关的类，它主要负责网络请求，数据库处理，I&#x2F;O的操作。
-总结概括:
-将数据的处理逻辑抽出来封装成一个Model。可以看下面的代码
-123456789101112131415161718# Modelpublic void  getUserInfo(String uid,Callback1&lt;UserInfo&gt; callback)&#123;        UserInfo userInfo= new HttpUtil&lt;UserInfo&gt;().get(uid);        callback.onCallBack(userInfo);    &#125 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/26/Android%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" title="无题">无题</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-26T11:10:09.235Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></span></div><div class="content"></div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/26/Android%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6/" title="Android四大组件">Android四大组件</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-26T11:10:09.234Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></span></div><div class="content">Activity生命周期方法
-onCreate(Bundle savedInstanceState)
-
-
-这是Activity被创建时系统调用的第一个方法。在这里，你应该做所有的静态设置：创建视图，绑定数据到列表等操作。如果有保存的状态，系统会传递给这个方法一个Bundle。
-
-
-onStart()
-
-
-当Activity对用户可见时，系统会调用这个方法。这可以发生在onCreate()方法结束后，或者在Activity从不可见状态恢复时。
-
-
-onRestart()
-
-
-如果Activity从停止状态重新开始，就会调用这个方法。它在onStop()之后和onStart()之前调用。
-
-
-onResume()
-
-
-当Activity准备好与用户互动时，系统会调用这个方法。这时，Activity位于Activity堆栈的顶部，并捕获所有用户输入。大部分的核心功能都在这个方法中实现。
-
-
-onPause()
-
-
-当系统准备启动或恢复另一个Activity时，系统会调用这个方法。这通常是因为用户正在离开这个Activity，但这个Activity还没有被完全停止或隐藏。在这个方法中，你应该释 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/26/ARouter/" title="路由框架原理">路由框架原理</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-26T11:10:09.228Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></span></div><div class="content">路由表注册​		抽出一个Router组件，然后给其他组件暴漏一个接口，用来让每个组件实现自己的路由注册类。然后通过遍历apk文件中的符合要求的包名。
-12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758object ApkUtils &#123;    /**     * 获取设备上所有已安装应用的APK文件路径。     * @param context 应用上下文。     * @return 包含所有已安装应用APK路径的列表。     */    fun getAllInstalledApkPaths(context: Context): List&lt;String&gt; &#123;        val apkPaths = mutableListOf&lt;String&gt;()        val packageManager = context.packageManager        // 获取设 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/26/Glide/" title="Glide">Glide</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-26T11:10:09.226Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></span></div><div class="content">GlideGlide 默认内存缓存用的是弱引用+LruCache
-取的顺序是：弱引用、LruCache、磁盘 
-存的顺序是：磁盘、弱引用、LruCache
-内存缓存Glide设计了一个弱引用缓存，当从内存里面加载时，会先从弱引用里面获取图片资源；
-为什么要多设计一层弱引用的缓存呢？
-这里要说一下弱引用在内存里面的机制，弱引用对象在Java虚拟机触发GC时，会回收弱引用对象，不管此时内存是不是够用！
-那么设计了一个弱引用缓存的好处在于，没有触发GC的这段时间，可以重复的利用图片资源，减少从LruCache里的操作；
-用弱引用保存正在使用的图片数据（正在使用的不能放在LRU内存缓存中，LRU有可能触发超过内存最大限制导致回收），当触发GC弱引用缓存被回收（说明此时不是正在使用的图片了）后又会被加到LRU缓存中。
-LruCache：
-LruCache 采用最近最少使用算法，设定一个缓存大小，当缓存达到这个大小之后，会将最老的数据移除，避免图片占用内存过大导致OOM。
-LruCache底层实现：
-LruCache 构造方法里创建一个LinkedHashMap，accessOrder 参数传tr ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/26/IM%E9%80%9A%E4%BF%A1%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86/" title="无题">无题</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-26T11:10:09.225Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></span></div><div class="content"></div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/26/Java%20%E7%BA%BF%E7%A8%8B%E6%B1%A0/" title="线程池">线程池</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-26T11:10:09.223Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></span></div><div class="content">简介​		重用存在的线程，减少对象创建、消亡的开销，提升性能。 可有效控制最大并发线程数，提高系统资源的使用率，同时避免过多资源竞争，避免堵塞。 提供定时执行、定期执行、单线程、并发数控制等功能。
+    })(window)</script><meta name="generator" content="Hexo 7.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://raw.githubusercontent.com/zrmomo/images/main/image/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="敲写拾遗"><img class="site-icon" src="https://raw.githubusercontent.com/zrmomo/images/main/image/avatar.png"/><span class="site-name">敲写拾遗</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/26/Java%20%E7%BA%BF%E7%A8%8B%E6%B1%A0/" title="线程池">线程池</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-26T11:10:09.223Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></span></div><div class="content">简介​		重用存在的线程，减少对象创建、消亡的开销，提升性能。 可有效控制最大并发线程数，提高系统资源的使用率，同时避免过多资源竞争，避免堵塞。 提供定时执行、定期执行、单线程、并发数控制等功能。
 123456public ThreadPoolExecutor(int corePoolSize,                               int maximumPoolSize, //池中允许的最大线程数                              long keepAliveTime,                              TimeUnit unit,                              BlockingQueue&lt;Runnable&gt; workQueue,                              RejectedExecutionHandler handler)
 
 
@@ -209,7 +163,7 @@ int corePoolSize: 核心线程数，即使线程是空闲的，也会一直存�
 重度依赖 Lifecycle
 
 ​		冷流就无法在构造器以外发射数据。
-​		在 Kotlin 中，冷流（Cold Flow）是指在订阅者开始收集之前不会开始发射数据的流。这意味着冷流通 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/26/kotlin%E5%8D%8F%E7%A8%8B2/" title="kotlin协程">kotlin协程</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-26T11:10:09.207Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></span></div><div class="content">简介​		协程是一种更高效和更简单的方式管理并发的框架，其轻量级线程编写在实际线程框架之上，通过利用函数的协作性质来充分利用它。
+​		在 Kotlin 中，冷流（Cold Flow）是指在订阅者开始收集之前不会开始发射数据的流。这意味着冷流通 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/26/kotlin%E5%8D%8F%E7%A8%8B2/" title="kotlin协程2">kotlin协程2</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-26T11:10:09.207Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></span></div><div class="content">简介​		协程是一种更高效和更简单的方式管理并发的框架，其轻量级线程编写在实际线程框架之上，通过利用函数的协作性质来充分利用它。
 ​		协程比线程更高效，因为它们是轻量级的，可以挂起和恢复而不会产生上下文切换的开销。这意味着它们可用于执行会阻塞线程的任务，而不会导致相同的性能损失。
 
 协程是轻量级的，创建一个线程栈大概需要1M左右，而一个协程栈大概只需要几K或者几十K
@@ -223,7 +177,7 @@ int corePoolSize: 核心线程数，即使线程是空闲的，也会一直存�
 成员协程框架大致有如下部分组成：
 
 协程作用域(CoroutineScope)
-协程 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/26/Retrofit/" title="无题">无题</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-26T11:10:09.201Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></span></div><div class="content">面试题retroft 是如何简化链路的retroft 的注解是什么时期解析​		Retrofit 的注解是在运行时解析的。当创建一个 Retrofit 实例并通过它创建 API 接口的动态代理对象时，Retrofit 会解析接口中定义的所有注解。这包括请求方法的注解（如 @GET、@POST 等），参数的注解（如 @Path、@Query 等），以及其他用于配置请求和响应处理的注解。
+协程 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/26/Retrofit/" title="Retrofit">Retrofit</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-26T11:10:09.201Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></span></div><div class="content">面试题retroft 是如何简化链路的retroft 的注解是什么时期解析​		Retrofit 的注解是在运行时解析的。当创建一个 Retrofit 实例并通过它创建 API 接口的动态代理对象时，Retrofit 会解析接口中定义的所有注解。这包括请求方法的注解（如 @GET、@POST 等），参数的注解（如 @Path、@Query 等），以及其他用于配置请求和响应处理的注解。
 1val apiService = retrofit.create(MyApiService::class.java)
 
 
@@ -233,4 +187,99 @@ Retrofit 动态代理具体做了什么Java 动态代理详解
 
 解析接口方法的注解
 
-1234interface MyApiService &#123;    @GET(&quot;users/&#123;user&#125;/repos&quot;)    fun listRepos(@Path(&quot;user&quot;) user: String): Call&lt;List&lt;Repo&gt;&gt;&#1 ...</div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/#content-inner">3</a><a class="page-number" href="/page/4/#content-inner">4</a><a class="extend next" rel="next" href="/page/3/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://raw.githubusercontent.com/zrmomo/images/main/image/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">狂奔的馒头</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">40</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="mailto:imcoddo@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20Activity%20%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" title="无题">无题</a><time datetime="2024-03-26T11:10:09.256Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20ANR/" title="Android ANR">Android ANR</a><time datetime="2024-03-26T11:10:09.254Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20Fragment/" title="无题">无题</a><time datetime="2024-03-26T11:10:09.252Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20Handler%E6%9C%BA%E5%88%B6/" title="Android Handler消息机制">Android Handler消息机制</a><time datetime="2024-03-26T11:10:09.250Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20Jetpack/" title="Android JetPack">Android JetPack</a><time datetime="2024-03-26T11:10:09.249Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div></div></div><div class="card-widget card-archives"><div class="item-headline"><i class="fas fa-archive"></i><span>归档</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/03/"><span class="card-archive-list-date">三月 2024</span><span class="card-archive-list-count">29</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/02/"><span class="card-archive-list-date">二月 2024</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/01/"><span class="card-archive-list-date">一月 2024</span><span class="card-archive-list-count">3</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/12/"><span class="card-archive-list-date">十二月 2023</span><span class="card-archive-list-count">7</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">40</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2024-03-26T11:11:06.889Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
+1234interface MyApiService &#123;    @GET(&quot;users/&#123;user&#125;/repos&quot;)    fun listRepos(@Path(&quot;user&quot;) user: String): Call&lt;List&lt;Repo&gt;&gt;&#1 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/26/%E6%8A%98%E5%8F%A0%E5%B1%8F%E9%80%82%E9%85%8D/" title="折叠屏适配">折叠屏适配</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-26T11:10:09.185Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></span></div><div class="content">折叠屏适配​		多形态屏幕切换适配的本质是： 当应⽤运⾏时，屏幕的尺⼨、密度或⽐例发⽣了变化，应⽤能够继续在变化后的屏幕上正常显示和正常运⾏。（摘自移动智能终端生态联盟）
+前置知识
+相关的单位
+
+
+
+
+px
+像素点  1080*1920的屏幕，就是宽1080个像素点和高1920个像素点。像素的大小是没有固定长度的，不同设备上一个单位像素色块的大小是不一样的。比如相同尺寸的屏幕所具有的像素点数量可能不同。
+
+
+
+dp
+布局的单位 ，最终会转化为像素点的数量。
+
+
+sp
+布局的单位用于控制字体的大小，可以随着系统调整的字体大小改变。
+
+
+dpi
+屏幕像素密度 每英寸多少个像素点 图片选取通过dpi来判断
+
+
+适配过程杂记1.Application中添加属性android:resizeableActivity&#x3D;”true”，让app支持全屏展示。
+2.activity添加android:configChanges&#x3D;”screenSize|smallestScreenSize|screenLayout|orientation|density”
+解释：
+
+screenSize ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/08/Kotlin%E9%9D%A2%E8%AF%95%E9%A2%98/" title="kotlin面试题">kotlin面试题</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-08T13:15:10.143Z" title="发表于 2024-03-08 21:15:10">2024-03-08</time></span></div><div class="content">介绍一下kotlin的标准函数
+下面是常用的四个标准函数，还有takeIf，takeUnless等等。
+
+
+
+作用：
+
+可读性：标准库函数提供的功能可以用更简洁和具有描述性的方式来表达，这也使得代码更加易于理解和阅读。
+更少的样板代码：由于标准库函数将常见的操作封装在函数内部，因此，开发人员可以通过单行代码完成许多任务，这减少了样板代码的数量，并统一了代码的格式
+
+分别应用于哪些场景？
+let 和 run 通常用于需要对对象执行某些操作并返回结果的场景。
+with 适用于希望在一个特定对象上执行多个操作的场景。
+also 通常用于需要对对象进行链式操作并返回对象本身的场景。
+apply 适用于需要在对象上执行多个操作并返回对象本身的场景
+
+kotlin的高级特性有哪些
+Null安全：Kotlin通过内建的null安全支持来消除代码中的NullPointException。
+扩展函数：在Kotlin中，你可以为一个已存在的类添加新的函数，而不需要修改这个类的源代码。这就是扩展函数。
+默认参数和命名参数：Kotlin函数可以有默认参数值，这使得函数更加灵活。
+数据类：只需一个简单的data ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/08/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%9D%A2%E8%AF%95%E9%A2%98/" title="多线程面试题">多线程面试题</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-08T13:15:10.142Z" title="发表于 2024-03-08 21:15:10">2024-03-08</time></span></div><div class="content">说说对多线程的理解？​		多线程是一种并发编程技术，允许程序同时执行多个线程，每个线程独立执行不同的任务。多线程有助于充分利用多核处理器和提高程序性能。然而，多线程编程也引入了一些挑战，如竞态条件、死锁等，需要仔细处理。
+​		多线程是指在一个程序中同时运行多个线程（thread），每个线程独立执行不同的任务或代码段。多线程的好处是可以提高程序的并发性和响应性，即在同一时间内执行多个任务或操作，从而提高程序的执行效率和用户体验。
+多线程的实现方式通常包括以下步骤：
+
+创建线程：程序需要创建多个线程来并发执行不同的任务或操作。
+线程同步：多个线程之间需要协调执行顺序、共享资源等，因此需要使用同步机制来保证线程之间的正确性。常用的同步机制包括互斥锁、条件变量、信号量等。
+线程调度：操作系统会根据一定的调度策略来分配CPU时间片给不同的线程执行。线程调度的策略通常包括抢占式调度和协作式调度两种方式。
+线程结束：线程执行完任务后需要结束，释放占用的资源。线程结束的方式通常有两种，一种是线程自动结束，另一种是线程被其他线程或主线程强制结束。
+
+多线程的优点包括：
+
+提高程序的响应速度和并发性，能 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/08/%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/" title="网络面试题">网络面试题</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-08T13:15:10.140Z" title="发表于 2024-03-08 21:15:10">2024-03-08</time></span></div><div class="content">三次握手是什么？​		三次握手是建立TCP连接的过程，具体步骤如下：
+
+客户端向服务器发送SYN（同步）请求，请求建立连接。
+服务器接收到SYN请求后，回应一个ACK（确认）和自己的SYN，表示接受连接。
+客户端接收到服务器的ACK和SYN后，回应一个ACK，表示连接建立成功。
+
+三次握手变成两次了？有什么优点缺点？​		三次握手变成两次握手是指在建立TCP连接时，客户端不再发送第三次握手的ACK确认，而是在服务器回应第二次握手的SYN时直接发送数据。
+优点：
+
+减少连接建立的时延，提高连接速度。
+减少网络流量，节省带宽。
+
+缺点：
+
+不够安全，容易受到一些攻击，如SYN洪泛攻击。
+不适用于所有场景，只适用于可靠的连接。
+
+HTTPS为什么是安全的？​		HTTPS（HTTP Secure）是安全的主要因素包括以下几点：
+
+加密传输：HTTPS使用TLS（Transport Layer Security）协议对数据进行加密，使得数据在传输过程中不容易被窃取。
+身份验证：HTTPS使用数字证书来验证服务器的身份，确保用户连接到合法的服务器。
+数据完整性：HTTPS使用哈希函数来检测数据是 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/08/Android%E9%9D%A2%E8%AF%95%E9%A2%98/" title="Android 面试题">Android 面试题</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-08T13:15:10.139Z" title="发表于 2024-03-08 21:15:10">2024-03-08</time></span></div><div class="content">Fragment生命周期?
+**onAttach()**：当 Fragment 与 Activity 关联时调用。在这个方法中，你可以获取到 Activity 的引用，因此可以与 Activity 交互。
+**onCreate()**：创建 Fragment 时调用。在这里，你可以初始化对 Fragment 生命周期而言重要的组件，这些组件在 Fragment 停止时不需要被清除。
+**onCreateView()**：创建 Fragment 的视图层次结构时调用。这是用于为 Fragment 绘制 UI 的地方。
+**onViewCreated()**：在 onCreateView() 之后立即调用，表示所有的视图已经被创建完成。这个方法是一个好地方来执行与视图相关的初始化操作，以及访问 Activity 的初始化组件。
+**onStart()**：当 Fragment 对用户可见时调用。这与 Activity 的 onStart() 方法类似。
+**onResume()**：当 Fragment 处于活动状态并且可以与用户交互时调用。这与 Activity 的 onResume() ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/08/Java%E9%9D%A2%E8%AF%95%E9%A2%98/" title="java 面试题">java 面试题</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-08T13:15:10.137Z" title="发表于 2024-03-08 21:15:10">2024-03-08</time></span></div><div class="content">SparseArrary和HashMap比较SparseArray 使用两个数组来存储数据，避免了 HashMap 中的Integer自动装箱（autoboxing）过程，减少了内存占用。在处理小型数据集时，这种差异尤为明显。但这也就是仅仅的优点了。
+123456SparseArray+---------------------+| keys:   | 3 | 5 | 8 | +---------------------+| values: | A | B | C | +---------------------+
+
+SparseArray的局限性：
+
+只适用于整数键：SparseArray 只能使用整数作为键，而 HashMap 可以使用任何类型的对象作为键。
+可能不适合大型数据集：对于非常大的数据集，SparseArray 的二分查找可能不如 HashMap 的哈希查找高效。
+
+ConcurrentHashMap基本原理ConcurrentHashMap的get方法是没有使用同步锁的，synchronized 只锁定当前链表或红黑二叉树的首节点
+HashMap原理，存取过程，为什么 ...</div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/#content-inner">3</a><a class="page-number" href="/page/4/#content-inner">4</a><a class="extend next" rel="next" href="/page/3/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://raw.githubusercontent.com/zrmomo/images/main/image/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">狂奔的馒头</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="mailto:imcoddo@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20ANR/" title="Android ANR">Android ANR</a><time datetime="2024-03-26T11:10:09.254Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20Fragment/" title="Fragment相关">Fragment相关</a><time datetime="2024-03-26T11:10:09.252Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20Handler%E6%9C%BA%E5%88%B6/" title="Android Handler消息机制">Android Handler消息机制</a><time datetime="2024-03-26T11:10:09.250Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20Jetpack/" title="Android JetPack">Android JetPack</a><time datetime="2024-03-26T11:10:09.249Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%E7%BC%96%E8%AF%91%E6%B5%81%E7%A8%8B/" title="Android编译流程">Android编译流程</a><time datetime="2024-03-26T11:10:09.242Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div></div></div><div class="card-widget card-archives"><div class="item-headline"><i class="fas fa-archive"></i><span>归档</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/03/"><span class="card-archive-list-date">三月 2024</span><span class="card-archive-list-count">21</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/02/"><span class="card-archive-list-date">二月 2024</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/01/"><span class="card-archive-list-date">一月 2024</span><span class="card-archive-list-count">3</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/12/"><span class="card-archive-list-date">十二月 2023</span><span class="card-archive-list-count">7</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">32</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2024-03-26T11:22:14.364Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
