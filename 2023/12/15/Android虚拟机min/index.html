@@ -1,0 +1,430 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Android 虚拟机 | 敲写拾遗</title><meta name="author" content="狂奔的馒头"><meta name="copyright" content="狂奔的馒头"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="ART虚拟机每个 Android 应用在启动时都会创建一个新的进程，和一个对应的运行时环境实例，当中包括堆（Heap）的分配和垃圾回收等功能。在操作系统中，每个进程都有自己的独立地址空间，这包括了堆、栈、代码和数据段。 一个运行中的程序（进程）的内存空间被划分为几个区域，每个区域有特定的用途和属性：  栈（Stack）： 栈是由编译器自动管理的内存区域，用于存储程序执行时的函数调用信息。 它包括函">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 虚拟机">
+<meta property="og:url" content="https://zrmomo.github.io/2023/12/15/Android%E8%99%9A%E6%8B%9F%E6%9C%BAmin/index.html">
+<meta property="og:site_name" content="敲写拾遗">
+<meta property="og:description" content="ART虚拟机每个 Android 应用在启动时都会创建一个新的进程，和一个对应的运行时环境实例，当中包括堆（Heap）的分配和垃圾回收等功能。在操作系统中，每个进程都有自己的独立地址空间，这包括了堆、栈、代码和数据段。 一个运行中的程序（进程）的内存空间被划分为几个区域，每个区域有特定的用途和属性：  栈（Stack）： 栈是由编译器自动管理的内存区域，用于存储程序执行时的函数调用信息。 它包括函">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/zrmomo/images/main/image/avatar.png">
+<meta property="article:published_time" content="2023-12-15T09:14:57.000Z">
+<meta property="article:modified_time" content="2024-03-14T04:12:03.016Z">
+<meta property="article:author" content="狂奔的馒头">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/zrmomo/images/main/image/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zrmomo.github.io/2023/12/15/Android%E8%99%9A%E6%8B%9F%E6%9C%BAmin/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":true,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Android 虚拟机',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-03-14 12:12:03'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://raw.githubusercontent.com/zrmomo/images/main/image/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">40</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="敲写拾遗"><img class="site-icon" src="https://raw.githubusercontent.com/zrmomo/images/main/image/avatar.png"/><span class="site-name">敲写拾遗</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Android 虚拟机</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-12-15T09:14:57.000Z" title="发表于 2023-12-15 17:14:57">2023-12-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-03-14T04:12:03.016Z" title="更新于 2024-03-14 12:12:03">2024-03-14</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Android 虚拟机"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><h3 id="ART虚拟机"><a href="#ART虚拟机" class="headerlink" title="ART虚拟机"></a>ART虚拟机</h3><p>每个 Android 应用在启动时都会创建一个新的进程，和一个对应的运行时环境实例，当中包括堆（Heap）的分配和垃圾回收等功能。在操作系统中，每个进程都有自己的独立地址空间，这包括了堆、栈、代码和数据段。</p>
+<p>一个运行中的程序（进程）的内存空间被划分为几个区域，每个区域有特定的用途和属性：</p>
+<ol>
+<li><strong>栈（Stack）</strong>：<ul>
+<li>栈是由编译器自动管理的内存区域，用于存储程序执行时的函数调用信息。</li>
+<li>它包括函数的参数值、返回地址以及局部变量等。</li>
+<li>栈的特点是后进先出（LIFO）的数据结构，每当一个函数被调用时，它的信息就被推入（push）栈中，当函数调用完成后，这些信息就会被弹出（pop）栈。</li>
+<li>分配时机：栈空间通常在程序开始执行时由操作系统自动分配，随着函数的调用和返回，会动态地增长和缩减。</li>
+<li>分配者：操作系统负责分配一个初始栈空间给进程，并在运行时对栈进行管理。</li>
+</ul>
+</li>
+<li><strong>堆（Heap）</strong>：<ul>
+<li>堆是用于动态内存分配的区域，程序在运行时可以从堆上分配或释放内存。</li>
+<li>在C语言中，动态内存分配是通过<code>malloc</code>、<code>calloc</code>、<code>realloc</code>和<code>free</code>等函数实现的。</li>
+<li>在Android开发中，Java虚拟机（JVM）或其他运行环境（如Dalvik虚拟机或Android Runtime, ART）管理堆内存，程序员通常不需要手动管理这部分内存，因为垃圾回收器会自动回收不再使用的对象。</li>
+<li>分配时机：堆空间的分配是在程序运行时根据需要进行的，通常是程序员通过代码请求分配。</li>
+<li>分配者：在C和C++等语言中，是由程序员通过调用<code>malloc</code>、<code>new</code>等函数显式申请的。在Java、C#等使用垃圾回收机制的语言中，由虚拟机或运行时环境负责管理。</li>
+</ul>
+</li>
+<li><strong>BSS段（Block Started by Symbol）</strong>：<ul>
+<li>BSS段用于存储程序中的未初始化的全局变量和静态变量。</li>
+<li>在程序启动时，BSS段会被操作系统初始化为零或空指针。</li>
+<li>分配时机：BSS段的空间分配发生在程序启动时，在程序被加载到内存时自动分配。</li>
+<li>分配者：操作系统在加载程序时，会根据可执行文件的信息为BSS段分配内存，并将其初始化为零。</li>
+</ul>
+</li>
+<li><strong>数据段（Data Segment）</strong>：<ul>
+<li>数据段用来存储程序中已初始化的全局变量和静态变量。</li>
+<li>这些变量的初始值存储在程序的可执行文件中，并在程序加载到内存时被初始化。</li>
+<li>分配时机：数据段也是在程序启动时分配的，当程序被加载到内存时进行。</li>
+<li>分配者：操作系统根据程序的可执行文件内容，在加载程序时为数据段分配内存，并赋予初始值。</li>
+</ul>
+</li>
+<li><strong>程序代码区（Text Segment 或 Code Segment）</strong>：<ul>
+<li>程序代码区，也称为文本段，包含了程序的机器指令代码。</li>
+<li>这部分内存通常是只读的，以防止程序在运行时被意外修改。</li>
+<li>它对应的是程序源代码文件中的实际指令和函数定义。</li>
+<li>分配时机：程序代码区的分配同样发生在程序启动时，即当程序被加载到内存中时。</li>
+<li>分配者：操作系统根据可执行文件中的代码段来分配内存，并将程序代码加载到这一段内存中。</li>
+</ul>
+</li>
+</ol>
+<h3 id="JVM、ART、DVM-的区别"><a href="#JVM、ART、DVM-的区别" class="headerlink" title="JVM、ART、DVM 的区别"></a>JVM、ART、DVM 的区别</h3><p>Java虚拟机（JVM）和Android虚拟机（如Dalvik虚拟机和Android Runtime，ART）都是为了运行基于Java语言编写的程序而设计的，但它们在设计理念、架构和运行环境上存在一些关键区别：</p>
+<h4 id="功能原理："><a href="#功能原理：" class="headerlink" title="功能原理："></a>功能原理：</h4><p><strong>JVM</strong>：</p>
+<p>我们写的java文件,经过编译生成.class文件,然后经过java虚拟机类加载 就成了.class类,也就是我们运行时访问的XXX.class类。JVM底层会将字节码转换为机器码,然后运行在CPU内.也可以这么理解:<strong>JVM就是个转换器,他将我们写的代码转换为CPU可以识别的代码,然后运行在CPU内</strong>。</p>
+<p>或者说: JVM将CPU可以识别的代码,翻译成我们认识的java代码,让我们来写,我们写完后,它再负责翻译回去,让CPU执行。不同平台有不同的JVM,所以我们写一套代码,就能转换成不同平台的机器码,也就可以运行在不同平台上,这就是java跨平台的原理.</p>
+<p><strong>DVM</strong>：</p>
+<p>在app启动后,我们执行到对应功能的时候,就将这部分功能对应的代码 转换为 机器码,保存起来然后执行,可以理解为:<strong>用到才转换,所以也被称为JIT(just in time)</strong>.</p>
+<p>优点：节省内存</p>
+<p>缺点：执行速度慢</p>
+<p><strong>ART</strong>：</p>
+<p>主要有两个改善的地方.</p>
+<ul>
+<li><p>1 将转换为机器码的过程提前到了安装apk的时候.</p>
+</li>
+<li><p>2 内存分配方式和垃圾回收机制做了极大的优化.</p>
+<p>DVM是基于JIT实现的,也就是边编译边执行,在运行到对应功能的时候,才将代码转换为机器码,然后交给CPU去执行.</p>
+<p>而ART则不然,ART是在app安装的时候,就提前将所有代码转换为机器码保存下来,等到执行的时候,直接取出来在CPU中执行,也就是说,<strong>ART将转换为机器码这件事提前了. 所以叫做AOT(ahead of time)</strong>.</p>
+</li>
+</ul>
+<h4 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h4><p><strong>JVM</strong>：</p>
+<ul>
+<li>基于堆栈，每个线程都有自己的方法调用栈，栈帧中存储局部变量和操作数。</li>
+<li>运行标准Java字节码，通常以<code>.class</code>文件的形式存在。</li>
+<li>可在多种操作系统上运行，是跨平台的。</li>
+</ul>
+<p><strong>Dalvik&#x2F;ART</strong>：</p>
+<ul>
+<li><p>Dalvik有自己的字节码，不使用Java字节码</p>
+</li>
+<li><p>基于寄存器，更适合于资源受限的系统，如移动设备。</p>
+</li>
+<li><p>执行专为Dalvik设计的.dex格式文件，这是一种紧凑、针对Dalvik优化的字节码格式。</p>
+</li>
+<li><p>ART通过预编译（AOT编译）将应用程序转换为本机代码，从而提高性能。Dalvik采用的是JIT即时编译技术。</p>
+</li>
+<li><p>专门为Android系统设计，不是通用的跨平台解决方案。</p>
+</li>
+</ul>
+<h4 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h4><p><strong>JVM</strong>：</p>
+<ul>
+<li>采用即时编译（JIT）技术，在程序运行时将字节码编译成本地代码，实现性能优化。</li>
+<li>服务器和桌面环境中的JVM会进行大量的性能优化以提高吞吐量和减少延迟。</li>
+</ul>
+<p><strong>Dalvik&#x2F;ART</strong>：</p>
+<ul>
+<li>Dalvik使用JIT编译，但受限于移动设备的性能和电池寿命的限制。</li>
+<li>ART使用AOT编译，应用程序在安装时就被编译成本地代码，并在运行时进行JIT编译优Java虚拟机（JVM）和Android虚拟机（主要是指Dalvik虚拟机和Android运行时ART）都是为了在不同的硬件和操作系统平台上运行编译后的代码而设计的，但它们在设计哲学、实现方式和优化目标上有所不同。</li>
+</ul>
+<p>以下是JVM和Android虚拟机（Dalvik和ART）的一些主要区别：</p>
+<h4 id="目标平台："><a href="#目标平台：" class="headerlink" title="目标平台："></a>目标平台：</h4><ul>
+<li><strong>JVM</strong>：设计用于运行跨平台的Java应用程序，通常安装在个人电脑、服务器和大型系统上。</li>
+<li><strong>Android虚拟机</strong>：专门为低功耗、有限内存的移动设备设计。</li>
+</ul>
+<h4 id="执行代码格式："><a href="#执行代码格式：" class="headerlink" title="执行代码格式："></a>执行代码格式：</h4><ul>
+<li><strong>JVM</strong>：执行Java字节码，通常是<code>.class</code>文件或<code>.jar</code>文件中的代码。</li>
+<li><strong>Dalvik</strong>：执行为Android优化的Dex（Dalvik Executable）格式代码。</li>
+<li><strong>ART</strong>：虽然也支持Dex格式，但在应用安装时会将Dex编译成系统特定的本地机器码。</li>
+</ul>
+<h4 id="编译方法："><a href="#编译方法：" class="headerlink" title="编译方法："></a>编译方法：</h4><ul>
+<li><strong>JVM</strong>：主要使用即时编译（JIT），应用程序在运行时编译成本地代码。</li>
+<li><strong>Dalvik</strong>：使用解释执行，但也有JIT编译提高性能。</li>
+<li><strong>ART</strong>：使用预先编译（AOT），在安装时将应用编译成本地代码，以及在运行时通过JIT进行优化。</li>
+</ul>
+<h4 id="垃圾回收（GC）："><a href="#垃圾回收（GC）：" class="headerlink" title="垃圾回收（GC）："></a>垃圾回收（GC）：</h4><ul>
+<li><strong>JVM</strong>：提供多种垃圾回收器，可根据应用需求选择（如G1、CMS、Parallel等）。</li>
+<li><strong>Dalvik</strong>：使用一个简单的GC机制，适合内存有限的设备。</li>
+<li><strong>ART</strong>：提供改进的GC机制，包括分代垃圾回收和并发垃圾回收，以减少应用暂停时间。</li>
+</ul>
+<h4 id="性能优化："><a href="#性能优化：" class="headerlink" title="性能优化："></a>性能优化：</h4><ul>
+<li><strong>JVM</strong>：在服务器和桌面环境中，性能优化侧重于最大化吞吐量和减少GC暂停时间。</li>
+<li><strong>Android虚拟机</strong>：在移动设备上，优化侧重于启动速度，运行效率和响应速度，以及减少内存使用。</li>
+</ul>
+<h4 id="开发和分发模型："><a href="#开发和分发模型：" class="headerlink" title="开发和分发模型："></a>开发和分发模型：</h4><ul>
+<li><strong>JVM</strong>：通常用于开发通用Java应用程序，可以在任何安装了兼容JVM的系统上运行。</li>
+<li><strong>Android虚拟机</strong>：用于开发Android应用程序，这些应用程序通过Google Play商店或其他方式分发给Android用户。</li>
+</ul>
+<p>综上所述，JVM和Android虚拟机虽然都是虚拟机，但是它们在设计上是为了满足不同平台和需求而优化的。JVM更加通用和多功能，而Android虚拟机则是专门为移动设备和Android操作系统优化。</p>
+<h3 id="ART-Java-堆组成"><a href="#ART-Java-堆组成" class="headerlink" title="ART Java 堆组成"></a>ART Java 堆组成</h3><p>当 Android 虚拟机启动时，便会创建 Java 堆，后续所有 Java 对象所需要的内存都会从这个堆中分配，所以我们先来说说 Java 堆的组成。Java 堆由 <strong>ImageSpace、ZygoteSpace、Non moving space、LargeObjectSpace、MainSpace</strong> 这五个部分组成，下面是对每个组成的说明。</p>
+<ul>
+<li><strong>ImageSpace</strong>：用来存放系统库的对象，大小不固定。</li>
+<li><strong>ZygoteSpace</strong>：存放 Zygote 进程在启动过程中预加载和创建的各种对象，应用进程为 2M 左右，Zygote 进程为 64M，挨着 Image Space。</li>
+<li><strong>Non moving space</strong>：如果非 zygote 或 Native 进程启动时，便会将 ZygoteSpace 切分出 62M 左右，当做 non moving space，用来存放一些生命周期较长的对象。</li>
+<li><strong>LargeObjectSpace</strong>：用来存放大对象，大对象是大于 12K 的基本类型数组和 String 对象。</li>
+<li><strong>MainSpace</strong>：大对象以外的大部分的 Java 对象都会存放在这块空间。</li>
+</ul>
+<p>虽然 Java 堆的组成很多，但实际上应用代码中的 Java 对象几乎只会存放 MainSpace 和 LargeObjectSpace 这两个空间中，其他的空间都是给系统库或者 Zygote 使用的。Java 堆的空间是有限的，加起来只有 512M；</p>
+<h3 id="Java对象内存申请"><a href="#Java对象内存申请" class="headerlink" title="Java对象内存申请"></a>Java对象内存申请</h3><p>Java 中创建并加载一个对象有 2 种方式。</p>
+<ol>
+<li>显示加载：使用 Class.forName() 或者 ClassLoader.loadClass 方式加载对象。</li>
+<li>隐式加载：使用 new，反射或者访问静态变量或者函数加载对象。</li>
+</ol>
+<p>这 2 种方式到最后都会调用 AllocObjectWithAllocator 接口到 Java 堆中申请内存</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> mirror::Object* <span class="title">Heap::AllocObjectWithAllocator</span><span class="params">(Thread* self,</span></span></span><br><span class="line"><span class="params"><span class="function">                                                      ObjPtr&lt;mirror::Class&gt; klass,</span></span></span><br><span class="line"><span class="params"><span class="function">                                                      <span class="type">size_t</span> byte_count,</span></span></span><br><span class="line"><span class="params"><span class="function">                                                      AllocatorType allocator,</span></span></span><br><span class="line"><span class="params"><span class="function">                                                      <span class="type">const</span> PreFenceVisitor&amp; pre_fence_visitor)</span> </span>&#123;</span><br><span class="line">                                                      </span><br><span class="line">  ……</span><br><span class="line"></span><br><span class="line">  <span class="comment">//1.检测是否是LargeObject，如果是则在LargeObjectSpace申请内存</span></span><br><span class="line">  <span class="keyword">if</span> (kCheckLargeObject &amp;&amp; <span class="built_in">UNLIKELY</span>(<span class="built_in">ShouldAllocLargeObject</span>(klass, byte_count))) &#123;</span><br><span class="line">    obj = <span class="built_in">AllocLargeObject</span>&lt;kInstrumented, PreFenceVisitor&gt;(self, &amp;klass, byte_count,</span><br><span class="line">                                                           pre_fence_visitor);</span><br><span class="line">    <span class="keyword">if</span> (obj != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> obj.<span class="built_in">Ptr</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    ……</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ……</span><br><span class="line">  <span class="comment">//2. 非LargeObject，则调用TryToAllocate在mainspace申请内存</span></span><br><span class="line">  obj = <span class="built_in">TryToAllocate</span>&lt;kInstrumented, <span class="literal">false</span>&gt;(self, allocator, byte_count, &amp;bytes_allocated,</span><br><span class="line">                                          &amp;usable_size, &amp;bytes_tl_bulk_allocated);</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">UNLIKELY</span>(obj == <span class="literal">nullptr</span>)) &#123;</span><br><span class="line">    <span class="comment">//3. 申请失败的情况下则调用gc后再次申请</span></span><br><span class="line">    obj = <span class="built_in">AllocateInternalWithGc</span>(self,</span><br><span class="line">                                 allocator,</span><br><span class="line">                                 kInstrumented,</span><br><span class="line">                                 byte_count,</span><br><span class="line">                                 &amp;bytes_allocated,</span><br><span class="line">                                 &amp;usable_size,</span><br><span class="line">                                 &amp;bytes_tl_bulk_allocated,</span><br><span class="line">                                 &amp;klass);</span><br><span class="line">    ……        </span><br><span class="line">  &#125;</span><br><span class="line">  ……</span><br><span class="line">  <span class="keyword">return</span> obj.<span class="built_in">Ptr</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>虚拟机为 Java 对象申请内存时,会先检测是否是大对象：如果是大对象，则会调用 AllocLargeObject 在 LargeObjectSpace 中申请；如果不是，则调用 TryToAllocate 在 MainSpace 中申请。如果申请失败，就会执行 GC 后继续申请。</p>
+<h3 id="Java对象内存释放"><a href="#Java对象内存释放" class="headerlink" title="Java对象内存释放"></a>Java对象内存释放</h3><p>在 Java 堆中申请内存时，如果申请失败，或者申请完毕后超过了阈值，就会执行 GC。</p>
+<p>对于 ART 虚拟机的垃圾回收器来说，<strong>是通过可达性分析来判断一个对象是否可以被回收</strong>。<strong>GarbageCollector</strong> 会对 <strong>space</strong> 中的每一个对象的引用链进行分析，如果这个对象的引用链最终被 <strong>GC Root</strong> 持有，就说明这个对象不可回收。否则，就可以回收。如下图所示，对象 object 5、object 6、object 7 虽然互有关联，但是它们没有被 GC Roots 持有， 因此会被判定为可回收的对象。</p>
+<p><img src="https://raw.githubusercontent.com/zrmomo/images/main/image/9297dd5668e34c8e97422a9dc4ad4f58%7Etplv-k3u1fbpfcp-jj-mark%3A1512%3A0%3A0%3A0%3Aq75.awebp" alt="image.png"></p>
+<p>GC Root 有下面几项：</p>
+<ol>
+<li>栈中引⽤的对象：比如应用中主线程的 Handler，它是不会退出的，如果在 Handler 中持有了一个对象，那么这个对象就是被主线程栈所引用的对象，属于 GC Root 可达。这样一来，在 GarbageCollector 执行 GC 时就不会释放这个对象。</li>
+<li>静态变量、常量引⽤的对象：被静态变量应用的对象也是属于 GC Root 可达，只有我们手动置为 null 才能释放这个对象。</li>
+<li>本地⽅法栈 Native ⽅法引⽤的对象：通过 JNI 调用，传递到 Native 层并被 Native 的函数引用的对象。</li>
+</ol>
+<h3 id="优化方案"><a href="#优化方案" class="headerlink" title="优化方案"></a>优化方案</h3><p>通过上面对 Java 堆的原理的讲解，我们了解了这 2 个知识点：</p>
+<ol>
+<li>Java 堆的空间是有限的，加起来只有 512M；</li>
+<li>只有在切断 Java 对象和 GC Root 的关联后，虚拟机的 GC 机制才会回收该对象。</li>
+</ol>
+<p>基于这 2 个底层的知识点，我们就可以总结出 Java 堆内存优化的 3 条方法论：</p>
+<ol>
+<li><strong>减少加载进程</strong> <strong>Java</strong> <strong>堆的数据</strong></li>
+<li><strong>及时清理加载进</strong> <strong>Java</strong> <strong>堆的数据</strong></li>
+<li><strong>增加</strong> <strong>Java</strong> <strong>堆空间可用大小</strong></li>
+</ol>
+<h3 id="GC触发条件"><a href="#GC触发条件" class="headerlink" title="GC触发条件"></a>GC触发条件</h3><ul>
+<li>通过new分配新对象时，堆中剩余空间不足，因此需要先进行GC。这种情况会导致当前线程阻塞。</li>
+<li>到达阈值</li>
+<li>手动调用系统API System.gc()时，会产生一次GC动作。</li>
+<li>系统空闲。这个空闲判断条件也很多，比如进到后台，或者消息队列没数据等等。 后台GC，这里的“后台”并不是指应用切到后台才会执行的GC，而是GC在运行时基本不会影响其他线程的执行，所以也可以理解为并发GC。</li>
+<li>启动时候出现gc，主要还是在于内存压力，到达一定的压力水位，就会触发GC</li>
+</ul>
+<p>C有不同的程度的，内存不足的时候的GC是最深度的，对性能影响也最大。达到不同的预测，GC的程度不一样，刚到达阈值的时候，可能就只是轻度的GC，轻度的就是标记清除，中度的就是复制拷贝回收。</p>
+<h3 id="Java堆内存的获取"><a href="#Java堆内存的获取" class="headerlink" title="Java堆内存的获取"></a>Java堆内存的获取</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">loge(<span class="string">&quot;JVM试图使用的最大内存量，即应用程序可以使用的最大堆内存 ：<span class="subst">$&#123;Runtime.getRuntime().maxMemory()&#125;</span>&quot;</span>)</span><br><span class="line">loge(<span class="string">&quot;JVM当前已经从系统获取的内存量，包括已使用的内存和未使用的内存  ：<span class="subst">$&#123;Runtime.getRuntime().totalMemory()&#125;</span>&quot;</span>)</span><br><span class="line">loge(<span class="string">&quot;JVM中未使用的内存量  ：<span class="subst">$&#123;Runtime.getRuntime().freeMemory()&#125;</span>&quot;</span>)</span><br><span class="line">loge(<span class="string">&quot;JVM的最大内存减去当前已经被使用的内存，得出的结果是应用程序还可以继续使用的内存量: <span class="subst">$&#123;Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() + Runtime.getRuntime().freeMemory()&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="OOM产生"><a href="#OOM产生" class="headerlink" title="OOM产生"></a>OOM产生</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="type">bool</span> <span class="title">Heap::IsOutOfMemoryOnAllocation</span><span class="params">([[maybe_unused]] AllocatorType allocator_type,</span></span></span><br><span class="line"><span class="params"><span class="function">                                            <span class="type">size_t</span> alloc_size, <span class="comment">// 请求分配的内存大小</span></span></span></span><br><span class="line"><span class="params"><span class="function">                                            <span class="type">bool</span> grow)</span> </span>&#123;  <span class="comment">// 是否允许内存增长 </span></span><br><span class="line">  <span class="type">size_t</span> old_target = target_footprint_.<span class="built_in">load</span>(std::memory_order_relaxed);  <span class="comment">// 获取当前目标内存占用</span></span><br><span class="line">  <span class="comment">// 无限循环，计算新内存占用</span></span><br><span class="line">  <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="type">size_t</span> old_allocated = num_bytes_allocated_.<span class="built_in">load</span>(std::memory_order_relaxed);</span><br><span class="line">    <span class="comment">// 在当前已分配的内存基础上增加了新请求分配的内存。</span></span><br><span class="line">    <span class="type">size_t</span> new_footprint = old_allocated + alloc_size;</span><br><span class="line">    <span class="comment">// 判断新占用是否超过限制。UNLIKELY提示编译器该条件发生概率低</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">UNLIKELY</span>(new_footprint &lt;= old_target)) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">      <span class="comment">// growth_limit_ ：堆内存的最大值</span></span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">UNLIKELY</span>(new_footprint &gt; growth_limit_)) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    。。。</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>old_target</code> 相当于是一个可以变动的内存占用警戒线，而 <code>growth_limit_</code> 是不可超越的最大内存使用边界。如果内存使用超出了 <code>old_target</code> 但未到 <code>growth_limit_</code>，程序可能还有一定的弹性空间来调整内存使用；但是一旦超出 <code>growth_limit_</code>，则通常没有余地。</p>
+<h3 id="OOM产生路径"><a href="#OOM产生路径" class="headerlink" title="OOM产生路径"></a>OOM产生路径</h3><p><a target="_blank" rel="noopener" href="https://juejin.cn/post/7240636469462597690#heading-2">https://juejin.cn/post/7240636469462597690#heading-2</a></p>
+<h3 id="ART-GC历史"><a href="#ART-GC历史" class="headerlink" title="ART GC历史"></a>ART GC历史</h3><h4 id="Dalvik-GC-（直到Android-4-4-KitKat）"><a href="#Dalvik-GC-（直到Android-4-4-KitKat）" class="headerlink" title="Dalvik GC （直到Android 4.4 KitKat）"></a>Dalvik GC （直到Android 4.4 KitKat）</h4><ul>
+<li>初始的Dalvik虚拟机采用的是“标记-清除”（Mark-Sweep）算法。</li>
+<li>在必要时执行“Stop-the-World”（STW）垃圾回收，这意味着所有工作线程都必须暂停，直到垃圾回收过程完成。</li>
+</ul>
+<h4 id="ART-GC-（Android-5-0-Lollipop-和-5-1-Marshmallow）"><a href="#ART-GC-（Android-5-0-Lollipop-和-5-1-Marshmallow）" class="headerlink" title="ART GC （Android 5.0 Lollipop 和 5.1 Marshmallow）:"></a>ART GC （Android 5.0 Lollipop 和 5.1 Marshmallow）:</h4><ul>
+<li>引入了“分代GC”（Generational GC），它对对象按照存活时间进行分类，短暂对象和长期对象分别管理，以提高效率。</li>
+<li>引入了预编译技术，改善了垃圾回收的性能。</li>
+</ul>
+<h4 id="ART-GC-（Android-6-0-Nougat）"><a href="#ART-GC-（Android-6-0-Nougat）" class="headerlink" title="ART GC （Android 6.0 Nougat）:"></a>ART GC （Android 6.0 Nougat）:</h4><ul>
+<li>ART&#x2F;Dalvik Android团队使用汇编语言重写了整个对象分配过程，进一步提高了效率和性能。</li>
+</ul>
+<h4 id="ART-GC-（Android-8-0-9-0）"><a href="#ART-GC-（Android-8-0-9-0）" class="headerlink" title="ART GC （Android 8.0 ~ 9.0）:"></a>ART GC （Android 8.0 ~ 9.0）:</h4><ul>
+<li>引入了“并发复制GC”（Concurrent Copying GC），为CMS（Concurrent Mark-Sweep）的改进版本，减少了应用的暂停时间。</li>
+</ul>
+<h4 id="ART-GC-（Android-10开始）"><a href="#ART-GC-（Android-10开始）" class="headerlink" title="ART GC （Android 10开始）:"></a>ART GC （Android 10开始）:</h4><ul>
+<li>重新引入了“分代GC”，并作为“并发复制GC”的一个扩展，进一步优化内存管理和减少暂停时间</li>
+</ul>
+<p>在 Generational CC 中，堆内存并没有显式地划分为不同的代，而是在运行时 把不同的 region 标记为新生代或者老年代；</p>
+<p>下面是JVM对用户空间的划分</p>
+<p><img src="https://raw.githubusercontent.com/zrmomo/images/main/image/3a21f3fd821143708a0ea69ca309bad1%7Etplv-k3u1fbpfcp-zoom-in-crop-mark%3A1512%3A0%3A0%3A0.awebp" alt="在这里插入图片描述"></p>
+<p>Android虚拟机将堆内存同样分为三个区域：<strong>年轻代，年老代，永久代</strong>，针对年轻代和老年代，ART和Dalvik又做了细分。</p>
+<p><img src="https://raw.githubusercontent.com/zrmomo/images/main/image/5b4db7c314164ebab2619e5e7efc27e7%7Etplv-k3u1fbpfcp-zoom-in-crop-mark%3A1512%3A0%3A0%3A0-20231228163627586.awebp" alt="在这里插入图片描述"></p>
+<p><strong>ZygoteSpace：Zygote进程启动过程中创建的所有对象。这些对象是所有进程共享</strong></p>
+<p><strong>ImageSpcace：存放预加载的类，Android Framework中通用的类都都是存储在这里</strong></p>
+<p><strong>LargeObj Space：存放大于12k的类对象的空间</strong></p>
+<p><strong>Main Allooc Space：存放小对象的空间</strong></p>
+<p><strong>Non Moving Space&#x2F;Linear Alloc：只读的线性内存空间，主要用来存储虚拟机中在进程生命周期都不会结束清理的永久数据的类对象。</strong></p>
+<p>ZygoteSpace和ImageSpace存放共享的预加载的类，这样可以提高启动速度，还有根据对象的大小和特性划分LargeObjSpace，AllocSpace和Non Moving Space可以采用不同的垃圾回收策略，提高gc的效率和性能。</p>
+<p><img src="https://raw.githubusercontent.com/zrmomo/images/main/image/1*bsfQgcHVbxeFsXOGv5onPA-20231228165437394.png" alt="img"></p>
+<h3 id="Android中的GC"><a href="#Android中的GC" class="headerlink" title="Android中的GC"></a>Android中的GC</h3><p>Android中的GC是通过<strong>HeapTaskDaemon</strong>线程来实现的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">HeapTaskDaemon</span> <span class="keyword">extends</span> <span class="title class_">Daemon</span> &#123;</span><br><span class="line">    <span class="comment">// 单例模式，内部类中创建该类的唯一实例。</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">HeapTaskDaemon</span> <span class="variable">INSTANCE</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HeapTaskDaemon</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 构造方法，设置守护线程的线程名为 &quot;HeapTaskDaemon&quot;。</span></span><br><span class="line">    HeapTaskDaemon() &#123;</span><br><span class="line">        <span class="built_in">super</span>(<span class="string">&quot;HeapTaskDaemon&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 同步方法，用于中断指定的线程。</span></span><br><span class="line">    <span class="comment">// 这个方法会通知 VMRuntime 停止堆任务处理器。</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">interrupt</span><span class="params">(Thread thread)</span> &#123;</span><br><span class="line">        VMRuntime.getRuntime().stopHeapTaskProcessor();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 守护线程的核心执行方法。</span></span><br><span class="line">    <span class="meta">@Override</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">runInternal</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 同步代码块，确保线程安全。</span></span><br><span class="line">        <span class="keyword">synchronized</span> (<span class="built_in">this</span>) &#123;</span><br><span class="line">            <span class="comment">// 如果守护线程正在运行，则通知 VMRuntime 启动堆任务处理器。</span></span><br><span class="line">            <span class="keyword">if</span> (isRunning()) &#123;</span><br><span class="line">              VMRuntime.getRuntime().startHeapTaskProcessor();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 运行堆任务。</span></span><br><span class="line">        <span class="comment">// 这个方法可能会执行垃圾收集（GC）或其他与堆管理相关的任务。</span></span><br><span class="line">        VMRuntime.getRuntime().runHeapTasks();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>HeapTaskDaemon 是一个守护线程（程序运行时在后台提供一种通用服务的线程），随着 Zygote 进程启动便会启动，该线程的 run 方法也比较简单，就是执行 runInternal 这个抽象函数，该抽象函数的实现方法中会执行 VMRuntime.getRuntime().runHeapTasks() 方法，runHeapTasks() 函数会执行 RunAllTasks 这个 Native 函数，它位于 <a href="https://link.juejin.cn/?target=https://cs.android.com/android/platform/superproject/+/master:art/runtime/gc/task_processor.cc">task_processor.cc</a> 这个类中。</p>
+<p>通过源码一路跟踪下来，可以看到 HeapTaskDaemon 线程的 run 方法中真正做的事情，实际只是在无限循环的调用 GetTask 函数获取 HeapTask 并执行。GetTask 中会不断从 tasks 集合中取出 HeapTask 来执行，并且对于需要延时的 HeapTask ，会阻塞到目标时间。</p>
+<p><img src="https://raw.githubusercontent.com/zrmomo/images/main/image/image-20231229155739553.png" alt="image-20231229155739553"></p>
+<p><img src="https://raw.githubusercontent.com/zrmomo/images/main/image/image-20231229155809976.png" alt="image-20231229155809976"></p>
+<h3 id="GC导致应用程序卡顿"><a href="#GC导致应用程序卡顿" class="headerlink" title="GC导致应用程序卡顿"></a>GC导致应用程序卡顿</h3><p>GC导致了用户线程的停止，这个机制叫做STW，为了防止出现 GC开始时对象没引用被标记为垃圾，GC过程中对象又被引用这种情况。</p>
+<p>回收策略：分代回收 分区回收</p>
+<p>垃圾检测算法：引用计数 可达性分析</p>
+<p>回收算法：标记复制 标记清除  标记整理</p>
+<h3 id="垃圾清除算法"><a href="#垃圾清除算法" class="headerlink" title="垃圾清除算法"></a>垃圾清除算法</h3><p><strong>标记清除</strong>：</p>
+<ul>
+<li><p>Mark阶段（标记阶段）：搜索内存中的Java对象（对ART虚拟机而言，就是遍历mirror Object对象），对那些能搜到的对象进行标记。</p>
+</li>
+<li><p>Sweep阶段（清除阶段）：释放那些没有被标记的对象所占据的内存。</p>
+<p>整个过程需要将整个程序暂停，清除完成之后才恢复程序运行，而且这个算法会带来碎片化的问题。</p>
+</li>
+</ul>
+<p><strong>复制算法</strong>：复制算法会将存活的对象复制到一块内存，然后将遗留下来的对象进行清理，这种算法不会产生碎片问题，但是会占用更多的内存，因为要一块空间来复制存活的对象。 年轻代</p>
+<p><strong>标记整理</strong>：先从根节点标记哪些是被对象引用的。第二阶段将所有存活的对象压缩移动到内存的另一端，按顺序排放，最后清除所有边界以外的空间。 老年代</p>
+<p><strong>分代算法</strong>：分代垃圾回收算法（Generational Garbage Collection）是基于对象生命周期不同的假设来进行垃圾回收的策略。它把对象分为几个“代”，通常至少分为两代：年轻代（Young Generation）和老年代（Old Generation）。</p>
+<h3 id="GC-Root"><a href="#GC-Root" class="headerlink" title="GC Root"></a>GC Root</h3><ul>
+<li>局部变量表：正在执丸行的函数的参数、临时变量，临时值</li>
+<li>方法区中的静态变量：如类的静态变量</li>
+<li>方法区中的常量池：如常量池中的常量引用实例</li>
+<li>本地方法栈中的变量：NI调用Native方法所引用的实例</li>
+<li>同步锁持有的对象</li>
+</ul>
+</article><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/zrmomo/images/main/image/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/01/16/kotlin%E6%B3%9B%E5%9E%8B/" title=""><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info"></div></div></a></div><div class="next-post pull-right"><a href="/2023/12/15/Android%20View%E7%9B%B8%E5%85%B3/" title="Android View"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Android View</div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://raw.githubusercontent.com/zrmomo/images/main/image/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">狂奔的馒头</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">40</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="mailto:imcoddo@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#ART%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="toc-number">1.</span> <span class="toc-text">ART虚拟机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JVM%E3%80%81ART%E3%80%81DVM-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">2.</span> <span class="toc-text">JVM、ART、DVM 的区别</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD%E5%8E%9F%E7%90%86%EF%BC%9A"><span class="toc-number">2.1.</span> <span class="toc-text">功能原理：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84"><span class="toc-number">2.2.</span> <span class="toc-text">架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="toc-number">2.3.</span> <span class="toc-text">性能优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87%E5%B9%B3%E5%8F%B0%EF%BC%9A"><span class="toc-number">2.4.</span> <span class="toc-text">目标平台：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%A0%BC%E5%BC%8F%EF%BC%9A"><span class="toc-number">2.5.</span> <span class="toc-text">执行代码格式：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E6%96%B9%E6%B3%95%EF%BC%9A"><span class="toc-number">2.6.</span> <span class="toc-text">编译方法：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%EF%BC%88GC%EF%BC%89%EF%BC%9A"><span class="toc-number">2.7.</span> <span class="toc-text">垃圾回收（GC）：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%EF%BC%9A"><span class="toc-number">2.8.</span> <span class="toc-text">性能优化：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%80%E5%8F%91%E5%92%8C%E5%88%86%E5%8F%91%E6%A8%A1%E5%9E%8B%EF%BC%9A"><span class="toc-number">2.9.</span> <span class="toc-text">开发和分发模型：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ART-Java-%E5%A0%86%E7%BB%84%E6%88%90"><span class="toc-number">3.</span> <span class="toc-text">ART Java 堆组成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98%E7%94%B3%E8%AF%B7"><span class="toc-number">4.</span> <span class="toc-text">Java对象内存申请</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98%E9%87%8A%E6%94%BE"><span class="toc-number">5.</span> <span class="toc-text">Java对象内存释放</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88"><span class="toc-number">6.</span> <span class="toc-text">优化方案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GC%E8%A7%A6%E5%8F%91%E6%9D%A1%E4%BB%B6"><span class="toc-number">7.</span> <span class="toc-text">GC触发条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java%E5%A0%86%E5%86%85%E5%AD%98%E7%9A%84%E8%8E%B7%E5%8F%96"><span class="toc-number">8.</span> <span class="toc-text">Java堆内存的获取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#OOM%E4%BA%A7%E7%94%9F"><span class="toc-number">9.</span> <span class="toc-text">OOM产生</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#OOM%E4%BA%A7%E7%94%9F%E8%B7%AF%E5%BE%84"><span class="toc-number">10.</span> <span class="toc-text">OOM产生路径</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ART-GC%E5%8E%86%E5%8F%B2"><span class="toc-number">11.</span> <span class="toc-text">ART GC历史</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Dalvik-GC-%EF%BC%88%E7%9B%B4%E5%88%B0Android-4-4-KitKat%EF%BC%89"><span class="toc-number">11.1.</span> <span class="toc-text">Dalvik GC （直到Android 4.4 KitKat）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ART-GC-%EF%BC%88Android-5-0-Lollipop-%E5%92%8C-5-1-Marshmallow%EF%BC%89"><span class="toc-number">11.2.</span> <span class="toc-text">ART GC （Android 5.0 Lollipop 和 5.1 Marshmallow）:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ART-GC-%EF%BC%88Android-6-0-Nougat%EF%BC%89"><span class="toc-number">11.3.</span> <span class="toc-text">ART GC （Android 6.0 Nougat）:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ART-GC-%EF%BC%88Android-8-0-9-0%EF%BC%89"><span class="toc-number">11.4.</span> <span class="toc-text">ART GC （Android 8.0 ~ 9.0）:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ART-GC-%EF%BC%88Android-10%E5%BC%80%E5%A7%8B%EF%BC%89"><span class="toc-number">11.5.</span> <span class="toc-text">ART GC （Android 10开始）:</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Android%E4%B8%AD%E7%9A%84GC"><span class="toc-number">12.</span> <span class="toc-text">Android中的GC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GC%E5%AF%BC%E8%87%B4%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E5%8D%A1%E9%A1%BF"><span class="toc-number">13.</span> <span class="toc-text">GC导致应用程序卡顿</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9E%83%E5%9C%BE%E6%B8%85%E9%99%A4%E7%AE%97%E6%B3%95"><span class="toc-number">14.</span> <span class="toc-text">垃圾清除算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GC-Root"><span class="toc-number">15.</span> <span class="toc-text">GC Root</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20Activity%20%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" title="无题">无题</a><time datetime="2024-03-26T11:10:09.256Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20ANR/" title="Android ANR">Android ANR</a><time datetime="2024-03-26T11:10:09.254Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20Fragment/" title="无题">无题</a><time datetime="2024-03-26T11:10:09.252Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20Handler%E6%9C%BA%E5%88%B6/" title="Android Handler消息机制">Android Handler消息机制</a><time datetime="2024-03-26T11:10:09.250Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20Jetpack/" title="Android JetPack">Android JetPack</a><time datetime="2024-03-26T11:10:09.249Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(()=>{
+  const getGiscusTheme = theme => {
+    return theme === 'dark' ? 'dark' : 'light'
+  }
+
+  const loadGiscus = () => {
+    const config = Object.assign({
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'zrmomo/comment',
+      'data-repo-id': 'R_kgDOLFdqRA',
+      'data-category-id': 'DIC_kwDOLFdqRM4CcdAM',
+      'data-mapping': 'pathname',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true
+    },null)
+
+    const ele = document.createElement('script')
+    for (let key in config) {
+      ele.setAttribute(key, config[key])
+    }
+    document.getElementById('giscus-wrap').appendChild(ele)
+  }
+
+  const changeGiscusTheme = theme => {
+    const sendMessage = message => {
+      const iframe = document.querySelector('iframe.giscus-frame')
+      if (!iframe) return
+      iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app')
+    }
+
+    sendMessage({
+      setConfig: {
+        theme: getGiscusTheme(theme)
+      }
+    });
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment= loadGiscus
+  }
+})()</script></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

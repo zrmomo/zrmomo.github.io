@@ -1,0 +1,751 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>敲写拾遗 | 敲写拾遗</title><meta name="author" content="狂奔的馒头"><meta name="copyright" content="狂奔的馒头"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="检索 camera渲染到surfaceview原理  view的渲染原理   mvp mvvm mvi 的区别  客户端有没有对这种输入进行校验，比如敏感词   客户端校验通常是为了提高用户体验和减轻服务器的负担，但不应视为绝对可信的校验。服务器端应该对接收到的数据再次进行验证和过滤，以确保安全性和数据的一致性。这是因为客户端校验可以被绕过或篡改，所以服务器端校验是更为重要的一层保障。  怎么实现">
+<meta property="og:type" content="article">
+<meta property="og:title" content="敲写拾遗">
+<meta property="og:url" content="https://zrmomo.github.io/2024/03/26/%E6%A3%80%E7%B4%A2/index.html">
+<meta property="og:site_name" content="敲写拾遗">
+<meta property="og:description" content="检索 camera渲染到surfaceview原理  view的渲染原理   mvp mvvm mvi 的区别  客户端有没有对这种输入进行校验，比如敏感词   客户端校验通常是为了提高用户体验和减轻服务器的负担，但不应视为绝对可信的校验。服务器端应该对接收到的数据再次进行验证和过滤，以确保安全性和数据的一致性。这是因为客户端校验可以被绕过或篡改，所以服务器端校验是更为重要的一层保障。  怎么实现">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/zrmomo/images/main/image/avatar.png">
+<meta property="article:published_time" content="2024-03-26T11:10:09.193Z">
+<meta property="article:modified_time" content="2024-03-06T14:38:21.414Z">
+<meta property="article:author" content="狂奔的馒头">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/zrmomo/images/main/image/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zrmomo.github.io/2024/03/26/%E6%A3%80%E7%B4%A2/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":true,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '敲写拾遗',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-03-06 22:38:21'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://raw.githubusercontent.com/zrmomo/images/main/image/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">40</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="敲写拾遗"><img class="site-icon" src="https://raw.githubusercontent.com/zrmomo/images/main/image/avatar.png"/><span class="site-name">敲写拾遗</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">无题</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-03-26T11:10:09.193Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-03-06T14:38:21.414Z" title="更新于 2024-03-06 22:38:21">2024-03-06</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><h1 id="检索"><a href="#检索" class="headerlink" title="检索"></a>检索</h1><ul>
+<li><p>camera渲染到surfaceview原理</p>
+</li>
+<li><p>view的渲染原理 </p>
+</li>
+<li><p>mvp mvvm mvi 的区别</p>
+</li>
+<li><p>客户端有没有对这种输入进行校验，比如敏感词</p>
+</li>
+</ul>
+<p>客户端校验通常是为了提高用户体验和减轻服务器的负担，但不应视为绝对可信的校验。服务器端应该对接收到的数据再次进行验证和过滤，以确保安全性和数据的一致性。这是因为客户端校验可以被绕过或篡改，所以服务器端校验是更为重要的一层保障。</p>
+<ul>
+<li>怎么实现消息撤回</li>
+</ul>
+<p>消息撤回，首先本地会讲消息从消息列表里删除，然后调用im撤回消息的api，然后再通过im通知更新聊天对象的ui。具体的是每条消息有一个状态标识，通过这个表示可以判断当前消息的状态，然后对其做出处理。</p>
+<ul>
+<li><p>有没有做过播放记录，比如播放时长，播放进度</p>
+</li>
+<li><p>播放进度是本地存还是服务器存，客户端怎么处理，为什么这么设计</p>
+</li>
+<li><p>走本地缓存的话，这个数据准吗</p>
+</li>
+<li><p>有没有做用户画像</p>
+</li>
+<li><p>有没有做课程推荐，怎么推荐的</p>
+</li>
+<li><p>课程推荐是否跟学习记录有关系</p>
+</li>
+<li><p>什么是Java对象，不生成实例就不是对象吗</p>
+<p>  如果没有生成实例，那么就没有对象。</p>
+</li>
+<li><p>这是否用回调就行了，不需要用到观察者模式</p>
+</li>
+<li><p>你觉得生活中有哪些观察者模式案例</p>
+<p>  报警装置。推送装置。</p>
+</li>
+<li><p>Service用得多吗？Fragment用得多吗？</p>
+<h3 id=""><a href="#" class="headerlink" title=""></a></h3></li>
+<li><p>广播用过吗，四大组件还用过哪些</p>
+<ol>
+<li><strong>活动 (Activity)</strong> ：用户界面，对应一般应用中的各种界面。</li>
+<li><strong>服务 (Service)</strong> ：后台操作，比如播放音乐，网络操作等。</li>
+<li>**内容提供者 (Content Provider)**： 数据共享，可以跨程序共享数据。</li>
+<li>**广播接收器 (Broadcast Receiver)**：系统级的提示和通知服务。</li>
+</ol>
+</li>
+<li><p>二分查找的原理是什么</p>
+<ol>
+<li><p>首先，需要有一个已排序的数组。如果数组未排序，可以先使用排序算法进行排序</p>
+</li>
+<li><p>在数组中找到中间元素。如果中间元素正好是要查找的元素，则搜索过程结束</p>
+</li>
+<li><p>如果要查找的元素大于中间元素，则在数组大于中间元素的那一半中查找；如果要查找的元素小于中间元素，则在数组小于中间元素的那一半中查找</p>
+</li>
+<li><p>重复步骤2和3，直到找到要查找的元素，或者搜索范围被缩小为0</p>
+<p>二分查找的时间复杂度是O(logn)，其中n是数组的元素数量。这是因为每次查找都会将搜索范围缩小一半。但是，二分查找的缺点是它需要一个已排序的数组，如果数组未排序，那么排序的时间复杂度可能会高于O(logn)。此外，二分查找只适用于顺序存储结构，如数组</p>
+</li>
+</ol>
+</li>
+<li><p>快排的复杂度是什么</p>
+<p>  平均时间复杂度为O(nlogn)，在最好情况下时间复杂度为O(nlogn)，而在最坏情况下时间复杂度为O(n^2)。</p>
+</li>
+<li><p>快排的原理或过程了解吗</p>
+<ol>
+<li>选择一个基准元素（pivot），通常选择数组中的第一个元素或随机选择一个元素。</li>
+<li>将数组中的元素按照与基准元素的大小关系进行划分，将小于基准元素的值放在基准元素的左边，将大于基准元素的值放在基准元素的右边。这个过程称为分区（partition）。</li>
+<li>对基准元素左边和右边的子数组分别递归地进行快速排序。</li>
+<li>当递归到子数组的大小为1或0时，排序完成。</li>
+</ol>
+</li>
+<li><p>你认为什么是好的代码，你有什么经验</p>
+<p>  页面状态清晰，可扩展性强，比如要新加东西以很小的代码改动为代价实现。</p>
+</li>
+<li><p>你对安卓驱动了解哪些，你知道有哪些驱动</p>
+</li>
+<li><p>你认为扬声器是驱动吗</p>
+</li>
+<li><p>为什么是稍微优化性能和代码，是能力不足还是不敢</p>
+</li>
+<li><p>RxJava是网络库吗</p>
+<p>  RxJava是一个用于编程的库，它提供了响应式编程的功能，即使用可观察序列来编写异步和基于事件的程序。RxJava支持组合异步和基于事件的程序，能够轻松创建序列数据流，并提供丰富的操作符来处理这些数据流，比如过滤、转换、组合等。</p>
+</li>
+<li><p>git命令大概用过哪些</p>
+<p>  git merge   git pull   git pull -f   git fetch  </p>
+</li>
+<li><p>什么情况下会用merge</p>
+<p>  将修改的内容合并到主分支</p>
+</li>
+<li><p>compose与原生View的区别，优点和缺点</p>
+</li>
+<li><p>compose难推广还有其他原因吗</p>
+</li>
+<li><p>是不是任何项目都可以引入compose</p>
+</li>
+<li><p>泛型协变与逆变有了解吗</p>
+<p>​    </p>
+</li>
+<li><p>泛型的出现是为了解决什么问题</p>
+</li>
+<li><p>说一下栈的结构</p>
+</li>
+</ul>
+<p>栈是一种特殊的线性表，仅允许在表的一端进行插入和删除操作。</p>
+<ul>
+<li><p>这个循环往复的思想是什么</p>
+</li>
+<li><p>递归的使用需要注意什么</p>
+</li>
+</ul>
+<p>浪费栈内存的空间</p>
+<ul>
+<li><p>对于平时自学是怎么一个方式？</p>
+</li>
+<li><p>打包的流程，比如说怎么构建出来一个插件包？</p>
+</li>
+<li><p>那你知道插件化使用的是AAB bundle方案还是hook方案还是其他方案？</p>
+</li>
+<li><p>下发的是一个个dex文件吗？</p>
+</li>
+<li><p>当我们打出来一个APK，有没有包含Activity这个类（正常打包，Framework的Activity）或者说Service会打到我们的APK？</p>
+</li>
+<li><p>Activity没有打包到APK，为什么我们可以使用到这个类呢？</p>
+</li>
+</ul>
+<p>系统预置把</p>
+<ul>
+<li><p>OOM崩溃	</p>
+</li>
+<li><p>有处理过内存优化相关的事情没</p>
+</li>
+<li><p>内存优化掌握到什么程度</p>
+</li>
+<li><p>哪一个方面或技术领域研究的多一些</p>
+</li>
+<li><p>关于网络这一块的理解</p>
+</li>
+<li><p>OKHttp源码了解哪些</p>
+</li>
+<li></li>
+<li></li>
+<li><p>网络相关的优化</p>
+</li>
+</ul>
+<ol>
+<li><strong>使用高效的数据格式</strong>：<ul>
+<li>选择合适的数据格式，如JSON或者Protocol Buffers，这些格式可以显著减少数据的大小和解析时间。</li>
+</ul>
+</li>
+<li><strong>数据压缩</strong>：<ul>
+<li>在服务器端开启GZIP或Brotli等压缩方法，可以减少传输的数据量，加快加载速度。</li>
+</ul>
+</li>
+<li><strong>缓存策略</strong>：<ul>
+<li>利用HTTP缓存头（例如<code>Cache-Control</code>, <code>ETag</code>, <code>Last-Modified</code>）合理缓存数据，减少不必要的网络请求。</li>
+</ul>
+</li>
+<li><strong>网络请求优化</strong>：<ul>
+<li>使用批量请求减少HTTP的请求数量，或者使用WebSockets进行实时通信。</li>
+<li>对于移动设备，可以使用OkHttp等库来调整并发请求和连接池的大小，优化TCP&#x2F;HTTP的性能。</li>
+</ul>
+</li>
+<li><strong>图片和视频优化</strong>：<ul>
+<li>根据客户端分辨率和需求对图片和视频进行适当的压缩和格式转换（如WebP格式的图片）。</li>
+</ul>
+</li>
+<li><strong>懒加载（Lazy Loading）</strong>：<ul>
+<li>只加载用户可视区域内的内容，而其他内容则在滚动到可视区域时加载。</li>
+</ul>
+</li>
+<li><strong>预加载（Preloading）</strong>：<ul>
+<li>在用户可能需要之前，事先加载资源。</li>
+</ul>
+</li>
+<li><strong>优先级加载</strong>：<ul>
+<li>确保关键资源（比如CSS文件）首先被加载，以提高用户感知的加载速度。</li>
+</ul>
+</li>
+<li><strong>减少服务器响应时间</strong>：<ul>
+<li>使用CDN分发内容，使资源尽可能靠近用户。</li>
+<li>优化服务器配置和数据库查询，以减少响应时间。</li>
+</ul>
+</li>
+<li><strong>连接保持活动（Keep-Alive）</strong>：<ul>
+<li>使HTTP连接保持开启状态，以便多个请求可以复用相同的TCP连接，减少TCP握手时间。</li>
+</ul>
+</li>
+<li><strong>分页或分块获取大数据</strong>：<ul>
+<li>当需要加载大量数据时，通过分页或者分块的方式逐步加载，减少单次加载的数据量。</li>
+</ul>
+</li>
+<li><strong>错误和超时处理</strong>：<ul>
+<li>合理设置超时时间，对请求失败进行重试策略和错误处理，能够改善不稳定网络环境下的用户体验。</li>
+</ul>
+</li>
+<li><strong>移动网络适配</strong>：<ul>
+<li>检测网络类型（WiFi、4G等），对不同的网络条件进行适应，例如在WiFi下加载高质量资源，在移动网络下加载低质量资源。</li>
+</ul>
+</li>
+<li><strong>Web请求的并发限制</strong>：<ul>
+<li>在并发环境下，限制同时发出的HTTP请求数量，避免并发请求带来的服务器压力和客户端性能问题。</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li><p>如何实现HTTPS建连，回传像HTTP一样快（连接复用没有生效时怎么做到呢，能不能通过空间换时间实现）</p>
+</li>
+<li><p>有没有做过弱网优化</p>
+</li>
+</ul>
+<p>优化重试机制：智能化的重试策略，能在网络恢复时自动尝试重新连接，而不是简单地在请求失败后立即重试。简单说就是再当前场景下，网络恢复后重新请求网络。</p>
+<p>预加载策略：在网络状况良好时，预先加载用户可能接下来会浏览的内容。</p>
+<ul>
+<li><p>拿到ANR trace，文件很大，怎么入手分析ANR</p>
+</li>
+<li><p>ANR堆栈不明确，怎么定位原因</p>
+</li>
+<li><p>多线程并发在实际开发中用到多吗</p>
+</li>
+<li><p>HashMap是线程安全的吗</p>
+</li>
+<li><p>多线程下使用HashMap，如何保证线程安全</p>
+</li>
+</ul>
+<p>使用Collections.synchronizedMap()包装一下,包装后的 Map 在所有的方法上都使用了 <code>synchronized</code> 关键字</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, String&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">Map&lt;String, String&gt; synchronizedMap = Collections.synchronizedMap(map);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><strong>你写了熟悉java面向对象，你对对象的理解是什么？</strong></p>
+<p>  我对对象的理解是它是面向对象编程中的核心概念，<strong>对象代表着数据和操作数据的方法的封装单元</strong>。<strong>对象具有状态、行为</strong>和标识。通过类定义，可以创建多个对象实例，这有助于模块化和重用代码。</p>
+</li>
+<li><p><strong>有没有在工作中自定义view？</strong></p>
+<p>  是的，我在工作中经常需要自定义 View 来满足特定的用户界面需求，例如创建自定义的图表、按钮、动画效果等。</p>
+</li>
+<li><p><strong>有没有实现过更复杂的自定义view？</strong></p>
+<p>  是的，我曾经实现过一些复杂的自定义 View，如自定义的图表控件、可交互的自定义控件等，以满足复杂的用户界面需求。</p>
+</li>
+<li><p><strong>动态九宫格为什么没有考虑通过recyerview来实现？</strong></p>
+<p>  动态九宫格可能没有考虑使用 RecyclerView 来实现的原因之一是 RecyclerView 通常用于处理大量数据的列表或网格视图，而动态九宫格可能只包含少量动态项。此外，使用自定义 View 可能更灵活，可以更容易地满足特定的布局和交互需求。</p>
+</li>
+<li></li>
+<li></li>
+<li><p><strong>用了多久kotlin进行开发？</strong></p>
+<p>  我用 Kotlin 进行开发已经有一段时间了，具体的时间取决于项目需求和选择。</p>
+</li>
+<li><p><strong>介绍下kotlin的标准函数？</strong></p>
+<p>  Kotlin 的标准函数包括 <code>let</code>、<code>run</code>、<code>with</code>、<code>also</code> 和 <code>apply</code>。它们用于简化代码并提供不同的上下文。</p>
+<ul>
+<li><code>let</code>：在上下文对象上执行 lambda 表达式，并返回 lambda 表达式的结果。</li>
+<li><code>run</code>：在上下文对象上执行 lambda 表达式，并返回 lambda 表达式的结果。</li>
+<li><code>with</code>：将对象作为参数传递给 lambda 表达式，返回 lambda 表达式的结果。</li>
+<li><code>also</code>：在上下文对象上执行 lambda 表达式，返回上下文对象自身。</li>
+<li><code>apply</code>：在上下文对象上执行 lambda 表达式，返回上下文对象自身。</li>
+<li>takeIf</li>
+<li>takeUnless</li>
+<li>repeat</li>
+</ul>
+<p>  这些函数可根据不同的需求选择使用，有助于代码的简化和可读性的提高。
+  </p>
+</li>
+<li><p><strong>熟悉垃圾回收机制，你简单介绍下？</strong></p>
+<p>  垃圾回收是一种自动管理内存的机制，它负责检测和释放不再被引用的对象，以防止内存泄漏和浪费。在 Android 中，主要使用的垃圾回收机制是标记-清除（Mark and Sweep）和分代回收。</p>
+</li>
+<li><p><strong>标记一定会被回收吗？不被标记可以不被回收吗？</strong></p>
+<p>  是的，标记的对象会被回收，不被标记的对象将不会被回收。垃圾回收器通过标记存活的对象来确定哪些对象可以被回收，不被标记的对象将保留在内存中。</p>
+</li>
+<li><p><strong>假如内存不够用，有些没被标记的会不会被回收呢？</strong></p>
+<p>  是的，如果内存不足，垃圾回收器可能会采取措施回收未被标记的对象，以释放内存。这通</p>
+</li>
+</ul>
+<p>常发生在极端情况下，如系统内存不足时。</p>
+<ul>
+<li><p><strong>可达性分析算法在工作中有用过吗？</strong></p>
+<p>  可达性分析算法通常是垃圾回收器内部使用的一种算法，用于确定哪些对象可以被回收。开发人员通常不需要直接使用可达性分析算法，而是依赖于垃圾回收器来管理内存。</p>
+</li>
+<li><p><strong>生活中有什么是观察者模式这种现象？</strong></p>
+<p>  生活中的例子包括：</p>
+<ul>
+<li>电视节目订阅：观众可以订阅多个电视频道，当某个频道播放新节目时，观众会收到通知。</li>
+<li>股票市场：投资者可以订阅多个股票的价格变动，当股价变化时，他们会收到通知。</li>
+</ul>
+</li>
+<li><p><strong>多个订阅方，怎么中止？通知到一半怎么中止后面的观察者？</strong></p>
+<p>  在观察者模式中，中止通知通常由被观察者控制。可以在被观察者的通知方法中添加逻辑，以决定是否中止通知的传递。一旦中止通知，后面的观察者将不再接收到通知。</p>
+</li>
+<li><p><strong>除了观察者，还有什么方案可以取消？通知？</strong></p>
+<p>  除了观察者模式，可以使用发布-订阅模式（Publish-Subscribe）来实现相似的功能。在发布-订阅模式中，发布者负责发送消息，订阅者订阅感兴趣的消息，可以选择取消订阅以停止接收消息。</p>
+</li>
+<li><p><strong>代码检测之后，为什么其他业务方还会用到？</strong></p>
+<p>  代码检测通常是为了识别和修复潜在的问题和缺陷，但在实际应用中，其他业务方可能不会即时更新他们的代码，或者可能需要时间来适应新的规范和最佳实践。因此，即使进行了代码检测，其他业务方仍然可能继续使用旧的代码，直到进行必要的更新。</p>
+</li>
+<li><p><strong>图片，PNG压缩，还有没有其他方案去压缩？</strong></p>
+<p>  除了PNG压缩外，还可以使用其他图像压缩格式，如JPEG，以减小图像文件的大小。另外，还可以考虑使用WebP格式，它通常比PNG和JPEG更高效。此外，可以使用工具和库来自动压缩和优化图像，以确保最佳的图像压缩效果。</p>
+</li>
+<li><p><strong>放服务器方案，启动下载之后问题，下载SO有流量、IO消耗，包瘦身和这些指标怎么权衡的？</strong></p>
+<p>  在选择将资源放在服务器端动态下载时，需要权衡以下因素：</p>
+<ul>
+<li><strong>流量消耗</strong>：动态下载会消耗用户的数据流量，因此需要考虑用户的流量费用和体验。</li>
+<li><strong>IO消耗</strong>：服务器端资源动态下载可能需要较多的网络IO操作，因此需要考虑服务器的负载和性能。</li>
+<li><strong>包大小</strong>：包瘦身可以减小应用的初始安装包大小，提高下载和安装速度。</li>
+</ul>
+<p>  针对这些因素，需要综合考虑用户体验、服务器性能和网络成本，根据具体情况做出权衡决策。
+  </p>
+</li>
+<li><p><strong>假设没网，SO，图片没下载下来？有什么解决方案？</strong></p>
+<p>  如果应用在没有网络连接的情况下需要使用动态下载的SO和图片，可以考虑以下解决方案：</p>
+<ol>
+<li><strong>预打包</strong>：将关键的SO文件和图片预打包到应用的安装包中，以确保即使没有网络也可以</li>
+</ol>
+<p>  正常运行。<br>  2. <strong>离线缓存</strong>：在有网络时下载所需的资源并进行离线缓存，以便在没有网络时使用已下载的资源。<br>  3. <strong>优雅降级</strong>：设计应用以在没有网络时提供基本功能，不依赖于动态下载的资源。
+  </p>
+</li>
+<li><p><strong>默认图片方案，产品会接受吗？</strong></p>
+<p>  是否接受默认图片方案取决于产品和用户的需求。默认图片方案通常用于在资源未加载或下载时提供占位图像，以保持用户界面的完整性。产品团队通常会根据用户体验和性能需求来决定是否接受默认图片方案。</p>
+</li>
+<li><p><strong>业务方因为默认图片方案导致曝光量或者点击量降低了，你怎么解释？</strong></p>
+<p>  如果业务方因为默认图片方案导致曝光量或点击量降低，可以考虑以下解释和应对措施：</p>
+<ul>
+<li><strong>性能优化</strong>：确保默认图片方案不会导致性能下降，例如，加载占位图像的速度要快。</li>
+<li><strong>用户体验</strong>：解释默认图片的用途，强调它是为了提供更快的加载速度，同时鼓励用户升级到高质量图片。</li>
+<li><strong>A&#x2F;B 测试</strong>：进行A&#x2F;B测试以验证默认图片方案是否对用户行为产生负面影响，根据测试结果做出调整。</li>
+<li><strong>用户教育</strong>：向用户解释默认图片的用途，提醒他们下载高质量图片的好处。</li>
+</ul>
+</li>
+<li><p><strong>你的SO下载成功率是多少呢？</strong></p>
+<p>  成功率取决于网络环境、服务器性能、应用设计和用户设备等因素，难以给出具体数字。通常，可以通过监控和分析SO下载的日志来了解成功率，并根据需要进行优化和改进。</p>
+</li>
+<li><p><strong>优化了一些指标之后，怎么做防止指标反弹回去？</strong></p>
+<p>  为了防止优化后的指标反弹回去，可以采取以下措施：</p>
+<ol>
+<li><strong>监控和追踪</strong>：持续监控关键指标，及时发现问题并采取措施。</li>
+<li><strong>定期回顾</strong>：定期回顾和评估优化效果，确保指标的稳定性。</li>
+<li><strong>持续改进</strong>：根据监控数据和用户反馈，持续改进和优化应用。</li>
+<li><strong>团队协作</strong>：确保团队成员了解和共享最佳实践，以维持指标的稳定性。</li>
+</ol>
+</li>
+<li><p><strong>新包增加2M，比较什么内容你从什么方面入手呢？</strong></p>
+<p>  当新包增加2M时，可以考虑以下方面来确定哪些内容导致了包大小增加：</p>
+<ol>
+<li><strong>资源变化</strong>：检查新包中是否包含大量新增的资源文件，如图片、音频或视频。</li>
+<li><strong>库和依赖</strong>：查看新包是否引入了新的库或依赖项，它们可能会增加包大小。</li>
+<li><strong>代码变化</strong>：检查新代码是否增加了包大小，可能是因为新增的功能或模块。</li>
+<li><strong>资源压缩</strong>：确保资源文件进行了适当的压缩和优化。</li>
+<li><strong>代码混淆</strong>：使用代码混淆工具减小代码大小。</li>
+<li><strong>动态下载</strong>：检查是否在新版本中引入了动态下载资源的机制。</li>
+</ol>
+</li>
+<li><p><strong>多人团队开发中，怎么比较这个文件大小是谁增加的？</strong></p>
+<p>  在多人团队开发中，要比较特定文件大小是谁增加的，可以采用版本控制工具（如Git）的以下方法：</p>
+<ol>
+<li><strong>使用版本历史</strong>：查看文件的版本历史记录，可以查看每个版本中文件的大小变化。</li>
+<li><strong>作者信息</strong>：查看文件的作者信息，通常版本控制工具会记录每个提交的作者。</li>
+<li><strong>代码审查</strong>：在代码审查中讨论文件大小变化，团队成员可以提供相关信息。</li>
+</ol>
+</li>
+<li><p><strong>内存优化？基于什么背景做内存优化？</strong></p>
+<p>  内存优化是为了减少应用程序在运行时占用的内存，以提高性能和稳定性。内存优化的背景可能包括：</p>
+<ol>
+<li><strong>应用崩溃</strong>：应用因内存不足而崩溃或ANR。</li>
+<li><strong>性能问题</strong>：应用运行缓慢或卡顿，可能是因为内存过多被占用。</li>
+<li><strong>资源浪费</strong>：应用占用大量内存，导致设备性能下降和电池消耗增加。</li>
+<li><strong>用户体验</strong>：提高应用的响应速度和启动时间，以提供更好的用户体验。</li>
+</ol>
+</li>
+<li><p><strong>内存优化过程中用了什么方案，介绍一下？</strong></p>
+<p>  内存优化可能涉及多个方面，以下是一些可能用到的方案：</p>
+<ol>
+<li><strong>内存分析工具</strong>：使用工具如Android Profiler或Memory Profiler来分析内存使用情况，找到内存泄漏和冗余对象。</li>
+<li><strong>资源释放</strong>：及时释放不再使用的对象，特别是大对象和长生命周期对象。</li>
+<li><strong>使用弱引用</strong>：对于不需要强引用的对象，可以使用弱引用或软引用，以便垃圾回收器可以更容易地回收它们。</li>
+<li><strong>内存泄漏检测</strong>：使用工具如LeakCanary来检测内存泄漏并生成报告。</li>
+<li><strong>内存优化库</strong>：使用第三方库如LruCache来管理内存中的数据，以减少内存占用。</li>
+<li><strong>性能优化</strong>：通过减少不必要的计算和IO操作，减少内存消耗。</li>
+<li><strong>动态加载和释放资源</strong>：根据需要动态加载和释放资源，以减小应用的初始内存占</li>
+</ol>
+</li>
+</ul>
+<p>用。</p>
+<ul>
+<li><p><strong>有没有做过线程管控？</strong></p>
+<p>  线程管控通常是指管理和控制多线程应用程序的执行和资源分配。这可以包括线程池的使用、线程同步、线程调度和资源争用的处理。做过线程管控意味着熟悉多线程编程，以确保应用程序的稳定性和性能。</p>
+</li>
+<li><p><strong>如果一个第三方的SDK，在for循环里面疯狂创建对象，你怎么办？</strong></p>
+<p>  如果第三方SDK在for循环中频繁创建对象，可能会导致性能问题和内存占用增加。应对这种情况可以采取以下措施：</p>
+<ol>
+<li><strong>对象重用</strong>：尽量重用对象，避免重复创建和销毁。</li>
+<li><strong>批量操作</strong>：如果可能，尽量一次性批量操作对象，而不是在循环中逐个操作。</li>
+<li><strong>线程池</strong>：如果多线程环境下，考虑使用线程池来管理对象的创建和销毁，以避免过多线程创建对象。</li>
+<li><strong>SDK升级</strong>：联系SDK提供商，查看是否有性能优化的新版本可用。</li>
+</ol>
+</li>
+<li><p><strong>线程池，你怎么防止别人不去new，而来用你的线程池呢？</strong></p>
+<p>  防止别人不去新建线程，而使用你的线程池可以考虑以下方法：</p>
+<ol>
+<li><strong>文档和规范</strong>：明确文档和规范中的线程池使用规则，强调应该使用线程池而不是手动创建线程。</li>
+<li><strong>封装</strong>：将线程池封装为一个私有成员，并不暴露线程池的创建和管理方法。</li>
+<li><strong>访问控制</strong>：使用访问控制修饰符，将线程池设置为私有或受保护，限制外部访问。</li>
+<li><strong>代码审查</strong>：在代码审查中检查是否有违反线程池使用规则的代码。</li>
+<li><strong>教育和培训</strong>：对团队成员进行培训，教育他们正确使用线程池的重要性。</li>
+</ol>
+</li>
+<li><p><strong>假设团队有新同学来，他不知道有线程池，但是他去new了一下，你怎么避免这种情况？</strong></p>
+<p>  避免新团队成员在不了解线程池的情况下手动创建线程，可以考虑以下方法：</p>
+<ol>
+<li><strong>培训和教育</strong>：为新成员提供培训，教育他们线程池的概念和优势。</li>
+<li><strong>代码审查</strong>：在代码审查中检查新代码，确保不会手动创建线程而违反规则。</li>
+<li><strong>示例和最佳实践</strong>：提供示例代码和最佳实践，以展示如何正确使用线程池。</li>
+<li><strong>Lint检查</strong>：使用Lint工具或自定义规则检查代码，发现手动创建线程的情况。</li>
+<li><strong>文档和规范</strong>：在团队文档和规范中明确线程池的使用规则和标准。</li>
+</ol>
+</li>
+<li><p><strong>模块化组件化？说说你理解的组件化？</strong></p>
+<p>  模块化和组件化是一种软件架构设计的方式，用于将复杂的应用拆分成可重用的部分，以提高代码的可维护性和可扩展性。</p>
+<ul>
+<li><strong>模块化</strong>：模块化是将应用拆分成相对独立的模块或功能单元，每个模块负责特定功能或特性。这些模块可以是代码模块、库、插件等，它们之间通过明确定义的接口或API进行通信和交互。模块化的好处包括代码分离、单一职责、可重用性和易于测试。</li>
+<li><strong>组件化</strong>：组件化是在模块化基础上更进一步，将应用拆分成多个独立的组件，每个组件可以独立开发、构建和部署。组件可以包括不同的应用页面、功能、服务等，它们可以独立升级和替换。组件化的好处包括更高的团队协作、更快的开发迭代和更好的模块隔离。</li>
+</ul>
+</li>
+<li><p><strong>组件化通信有哪几种方式？</strong></p>
+<p>  在组件化架构中，不同组件之间需要进行通信，常见的通信方式包括：</p>
+<ol>
+<li><strong>隐式意图（Intent）</strong>：通过发送隐式意图，启动目标组件的活动或服务。</li>
+<li><strong>显式意图（Explicit Intent）</strong>：明确指定目标组件的类名来启动。</li>
+<li><strong>本地广播</strong>：使用本地广播来在同一应用内的组件之间进行通信。</li>
+<li><strong>事件总线</strong>：使用事件总线库（如EventBus）来发布和订阅事件，实现组件间的松耦合通信。</li>
+</ol>
+</li>
+<li><p><strong>跳转某个页面，页面根本就没有，会出现闪退吗？</strong>：如果尝试跳转到一个应用中不存在的页面，通常会抛出异常，但不一定会导致应用崩溃。具体行为取决于应用的错误处理机制和框架。</p>
+</li>
+<li><p><strong>ARouter源码有了解吗？</strong>：ARouter是一款Android路由框架，用于实现组件化开发和页面跳转管理。虽然我无法提供源码，但ARouter的源码通常是开放的，您可以访问GitHub或ARouter的官方网站以获取源码和文档。</p>
+</li>
+<li><p><strong>热修复原理是什么？</strong>：热修复是一种技术，用于在不重新安装应用程序的情况下修复已部署应用程序中的错误或漏洞。其原理通常包括以下步骤：</p>
+<ol>
+<li><strong>修复包生成</strong>：创建一个包含修复代码的修复包（Patch）。</li>
+<li><strong>差异检测</strong>：与原始应用版本进行比较，确定需要修复的部分。</li>
+<li><strong>加载修复包</strong>：将修复包下载到设备上并加载到应用程序中。</li>
+<li><strong>热修复框架</strong>：使用热修复框架来执行修复代码，替换原始应用程序中的有问题的部分。</li>
+<li><strong>验证和安全性</strong>：确保修复的代码经过验证，并符合应用程序的安全性要求。</li>
+</ol>
+</li>
+<li><p><strong>字节码方式可以修复到方法的吗？</strong>：是的，字节码方式可以用于修复方法级别的问题。通过字节码修复，您可以在不修改源代码的情况下，动态地修改或替换方法的实现。这在某些热修复框架中是一种常见的做法，可以实现方法级别的修复和补丁。</p>
+</li>
+<li><p><strong>我怎么知道要修复哪个方法？打完patch包，下发到app的时候</strong>：确定需要修复的方法通常需要通过应用程序的错误报告、用户反馈或自动化测试来发现。一旦确定了需要修复的问题，您可以使用热修复工具生成修复包，然后将修复包下发到应用程序中，以实现问题修复。</p>
+</li>
+<li><p><strong>介绍下Swift里面的闭包？</strong>：Swift中的闭包是自包含的功能块，可以在代码中传递和使用。闭包可以捕获和存储其所在上下文中任意常量和变量的引用，这使得闭包可以在稍后执行，即使在其原始范围已经不存在时仍然可以访问和修改这些值。闭包通常包括参数、返回类型和函数体，可以以非常灵活的方式定义和使用。</p>
+</li>
+<li><p><strong>用得多吗，介绍下Python的input函数？</strong>：闭包在Swift中是非常常见的概念，特别是在处理异步和回调时。关于Python的<code>input</code>函数，它用于从用户的控制台输入中读取一行文本。它等待用户输入，并将用户输入的内容作为字符串返回。示例代码如下：</p>
+  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">user_input = <span class="built_in">input</span>(<span class="string">&quot;请输入一些文本: &quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;你输入的是:&quot;</span>, user_input)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>对下一阶段的规划是什么？</strong>：我的能力是基于文本数据进行回答的，所以没有具体的规划。不过，通常的规划可能包括继续学习和深入了解新技术、扩展技能领域、参与实际项目等。</p>
+</li>
+<li><p><strong>你最近学什么技术看什么书？</strong>：由于我的知识截止日期在2021年，所以无法提供最新的信息。但我建议保持对您感兴趣领域的最新发展和技术趋势的关注，阅读相关的书籍和在线资源，以不断更新自己的知识。</p>
+</li>
+<li><p><strong>你算法方面你掌握怎么样？</strong>：我拥有广泛的算法知识，可以回答各种与算法相关的问题，包括排序、搜索、图算法、动态规划等。如果您有特定的算法问题，欢迎提出。</p>
+</li>
+<li><p><strong>快排的原理讲一下？</strong>：快速排序（Quicksort）是一种基于分治思想的高效排序算法。其原理如下：</p>
+<ol>
+<li>选择一个元素作为基准（通常是数组中的第一个元素）。</li>
+<li>将数组分成两个子数组：小于基准的元素和大于基准的元素。</li>
+<li>对这两个子数组递归地应用快速排序。</li>
+<li>最后，将两个排序好的子数组和基准合并在一起，得到最终的有序数组。</li>
+</ol>
+<p>  快速排序的关键在于选择合适的基准元素和有效地划分数组，它具有平均时间复杂度为O(nlogn)的性能。
+  </p>
+</li>
+<li><p><strong>快排的思想你记得吗？</strong>：快速排序的思想是通过不断地将数组分成两个子数组，并将小于基准元素和大于基准元素的元素分别放在基准的左右两侧，从而逐渐将数组排序。这是一种分治思想的应用，它通过递归地处理子</p>
+</li>
+<li><p><strong>快速排序的时间复杂度是多少？</strong></p>
+<p>  快速排序的平均时间复杂度是O(n log n)，最坏情况下是O(n^2)。这基于问题被分成的子问题数量和子问题规模缩小的倍数，以及分解和合并问题的时间开销。</p>
+</li>
+<li><p><strong>时间复杂度的一般公式是什么？</strong></p>
+<p>  时间复杂度的一般公式是T(n) &#x3D; a * T(n&#x2F;b) + f(n)，其中a表示问题被分成的子问题数量，b表示每个子问题的规模缩小的倍数，f(n)表示将问题分解和合并的时间开销。在快速排序中，a &#x3D; 2，b &#x3D; 2，而f(n)取决于基准元素的选择和数组的分割过程</p>
+</li>
+</ul>
+<h4 id="跨进程"><a href="#跨进程" class="headerlink" title="跨进程"></a>跨进程</h4><h4 id="判断用户的点击动作"><a href="#判断用户的点击动作" class="headerlink" title="判断用户的点击动作"></a>判断用户的点击动作</h4><h4 id="activity秒开"><a href="#activity秒开" class="headerlink" title="activity秒开"></a>activity秒开</h4><p>3. </p>
+<h4 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h4><h4 id="压缩包体积"><a href="#压缩包体积" class="headerlink" title="压缩包体积"></a>压缩包体积</h4><ol>
+<li>剔除无用资源</li>
+<li>图片压缩或者图片格式转换为Webp</li>
+</ol>
+<h4 id="kotlin懒加载"><a href="#kotlin懒加载" class="headerlink" title="kotlin懒加载"></a>kotlin懒加载</h4><p>当我们第一次访问这个属性时，它会调用<code>lazy</code>函数的参数lambda表达式，并将结果保存起来，以后每次访问<code>value</code>属性时，都会返回这个保存的结果。</p>
+<h4 id="View的绘制流程"><a href="#View的绘制流程" class="headerlink" title="View的绘制流程"></a>View的绘制流程</h4><h4 id="RecyclerView缓存"><a href="#RecyclerView缓存" class="headerlink" title="RecyclerView缓存"></a>RecyclerView缓存</h4><p>EventBus</p>
+<p>泛型字节流 </p>
+<ul>
+<li>项目引用结构</li>
+</ul>
+<p><code>./gradlew app:dependencies</code></p>
+<ul>
+<li>java类不能被继承除了final还有什么办法</li>
+</ul>
+<p>在Java中，如果一个类只有私有构造方法，那么其他类就不能继承它，也不能创建它的实例。</p>
+<ul>
+<li>Dialog生命周期</li>
+</ul>
+<ol>
+<li>onCreate() : 视图初始化创建</li>
+<li>show() ：视图显示</li>
+<li>onStart() : 视图启动</li>
+<li>cancel() ：视图取消</li>
+<li>onDismiss() ：视图结束</li>
+<li>Stop() ：视图停止</li>
+</ol>
+<ul>
+<li>ab线程顺序打印实现方式</li>
+</ul>
+<p>GC</p>
+<p>Jvm</p>
+<p>handler</p>
+<p>Android 版本差异</p>
+<p>Android多线程同步</p>
+<p>Android中的锁</p>
+<p>对称和非对称 加密</p>
+<p>tcp怎么保证可靠性</p>
+<p>http的滑动窗口</p>
+<p>tcp报文</p>
+<p>动态代理</p>
+<p>网络协议分层的意义</p>
+<p>自定义View </p>
+<p>线程池</p>
+<p>偏向锁</p>
+<p>Android中常用布局的性能对比</p>
+<p>Android drawable等资源文件夹的区别</p>
+<p>eventbus优缺点</p>
+<ul>
+<li><ul>
+<li></li>
+</ul>
+</li>
+</ul>
+<h4 id="MVP、MVVM、MVI"><a href="#MVP、MVVM、MVI" class="headerlink" title="MVP、MVVM、MVI"></a>MVP、MVVM、MVI</h4><h4 id="Activity启动模式适用场景"><a href="#Activity启动模式适用场景" class="headerlink" title="Activity启动模式适用场景"></a>Activity启动模式适用场景</h4><ol>
+<li><strong>standard（标准模式）</strong>：<ul>
+<li>场景：适用于大多数情况。每次启动 Activity 都会创建一个新的实例，并放入任务栈的顶部。</li>
+<li>示例：浏览器、新闻阅读等常规应用中的 Activity。</li>
+</ul>
+</li>
+<li><strong>singleTop（单顶模式）</strong>：<ul>
+<li>场景：当 Activity 已经位于任务栈的顶部时，再次启动它时不会创建新的实例，而是调用其 onNewIntent() 方法。适用于接收通知或点击通知后跳转到应用的详情页等情况。</li>
+<li>示例：新闻详情页、聊天页面等详情页。</li>
+</ul>
+</li>
+<li><strong>singleTask（单任务模式）</strong>：<ul>
+<li>场景：系统只会存在一个该 Activity 的实例，如果要启动的 Activity 已经存在于任务栈中，系统会将它上面的所有 Activity 出栈，使得该 Activity 成为任务栈的根。</li>
+<li>示例：应用的主界面、主页、欢迎页等只需要一个实例的界面。</li>
+</ul>
+</li>
+<li><strong>singleInstance（单实例模式）</strong>：<ul>
+<li>场景：系统会为该 Activity 创建一个新的任务栈，且该任务栈只包含该 Activity 的实例，其他 Activity 无法进入该任务栈。适用于需要独立运行的 Activity。</li>
+<li>示例：应用的播放器页面、地图导航页面等单独运行的功能界面。</li>
+</ul>
+</li>
+</ol>
+<h4 id="IM-是如何保持长连接的？"><a href="#IM-是如何保持长连接的？" class="headerlink" title="IM 是如何保持长连接的？"></a>IM 是如何保持长连接的？</h4><h4 id="IM-的过程中是如何保证安全的？"><a href="#IM-的过程中是如何保证安全的？" class="headerlink" title="IM 的过程中是如何保证安全的？"></a>IM 的过程中是如何保证安全的？</h4><h4 id="如何保证本地落库的数据不会被其他-App-或用户篡改？"><a href="#如何保证本地落库的数据不会被其他-App-或用户篡改？" class="headerlink" title="如何保证本地落库的数据不会被其他 App 或用户篡改？"></a>如何保证本地落库的数据不会被其他 App 或用户篡改？</h4><h4 id="TCP-是可靠的，为什么要依靠-MQTT-保持长连接？"><a href="#TCP-是可靠的，为什么要依靠-MQTT-保持长连接？" class="headerlink" title="TCP 是可靠的，为什么要依靠 MQTT 保持长连接？"></a>TCP 是可靠的，为什么要依靠 MQTT 保持长连接？</h4><h4 id="问了项目中埋点的实现"><a href="#问了项目中埋点的实现" class="headerlink" title="问了项目中埋点的实现"></a>问了项目中埋点的实现</h4><h4 id="实现了新的埋点框架，旧的埋点代码如何迁移"><a href="#实现了新的埋点框架，旧的埋点代码如何迁移" class="headerlink" title="实现了新的埋点框架，旧的埋点代码如何迁移"></a>实现了新的埋点框架，旧的埋点代码如何迁移</h4><h4 id="你们是如何做组件化的？你在里面的角色是什么？组件是怎么拆分的"><a href="#你们是如何做组件化的？你在里面的角色是什么？组件是怎么拆分的" class="headerlink" title="你们是如何做组件化的？你在里面的角色是什么？组件是怎么拆分的"></a>你们是如何做组件化的？你在里面的角色是什么？组件是怎么拆分的</h4><h4 id="组件之间的通信怎么解决？"><a href="#组件之间的通信怎么解决？" class="headerlink" title="组件之间的通信怎么解决？"></a>组件之间的通信怎么解决？</h4><h4 id="插件化怎么做"><a href="#插件化怎么做" class="headerlink" title="插件化怎么做"></a>插件化怎么做</h4><h4 id="构建-apk-的过程"><a href="#构建-apk-的过程" class="headerlink" title="构建 apk 的过程"></a>构建 apk 的过程</h4><h4 id="在构建的过程中怎么做字节码插桩"><a href="#在构建的过程中怎么做字节码插桩" class="headerlink" title="在构建的过程中怎么做字节码插桩"></a>在构建的过程中怎么做字节码插桩</h4><h4 id="如何做-carsh-治理、如何监控-java-和-native-crash"><a href="#如何做-carsh-治理、如何监控-java-和-native-crash" class="headerlink" title="如何做 carsh 治理、如何监控 java 和 native crash"></a>如何做 carsh 治理、如何监控 java 和 native crash</h4><h4 id="Native-常见的-carsh-有哪些"><a href="#Native-常见的-carsh-有哪些" class="headerlink" title="Native 常见的 carsh 有哪些"></a>Native 常见的 carsh 有哪些</h4><h4 id="说一下-ANR-是如何产生的"><a href="#说一下-ANR-是如何产生的" class="headerlink" title="说一下 ANR 是如何产生的"></a>说一下 ANR 是如何产生的</h4><h4 id="compileSDK-和-targetSDKVersion-区别"><a href="#compileSDK-和-targetSDKVersion-区别" class="headerlink" title="compileSDK 和 targetSDKVersion 区别"></a>compileSDK 和 targetSDKVersion 区别</h4><h4 id="说一下今日头条屏幕适配的原理"><a href="#说一下今日头条屏幕适配的原理" class="headerlink" title="说一下今日头条屏幕适配的原理"></a>说一下今日头条屏幕适配的原理</h4><h4 id="说一下组件化路由表底层怎么做的"><a href="#说一下组件化路由表底层怎么做的" class="headerlink" title="说一下组件化路由表底层怎么做的"></a>说一下组件化路由表底层怎么做的</h4><h4 id="说一下隐私合规你们改了哪些内容"><a href="#说一下隐私合规你们改了哪些内容" class="headerlink" title="说一下隐私合规你们改了哪些内容"></a>说一下隐私合规你们改了哪些内容</h4><h4 id="屏幕适配-dp-和-sp-有什么区别-dins-干什么用的"><a href="#屏幕适配-dp-和-sp-有什么区别-dins-干什么用的" class="headerlink" title="屏幕适配 dp 和 sp 有什么区别, dins 干什么用的"></a>屏幕适配 dp 和 sp 有什么区别, dins 干什么用的</h4><h4 id="说一下你们公司降级SDK怎么实现的"><a href="#说一下你们公司降级SDK怎么实现的" class="headerlink" title="说一下你们公司降级SDK怎么实现的?"></a>说一下你们公司降级SDK怎么实现的?</h4><h4 id="你们一周发几个版本-怎么保证一周两个版本不影响客户"><a href="#你们一周发几个版本-怎么保证一周两个版本不影响客户" class="headerlink" title="你们一周发几个版本, 怎么保证一周两个版本不影响客户"></a>你们一周发几个版本, 怎么保证一周两个版本不影响客户</h4><h4 id="说一下白屏监测原理"><a href="#说一下白屏监测原理" class="headerlink" title="说一下白屏监测原理"></a>说一下白屏监测原理</h4><h4 id="说一下-RecycleView-三级缓存"><a href="#说一下-RecycleView-三级缓存" class="headerlink" title="说一下 RecycleView 三级缓存"></a>说一下 RecycleView 三级缓存</h4><h4 id="说一下-R8-和-D8-的区别"><a href="#说一下-R8-和-D8-的区别" class="headerlink" title="说一下 R8 和 D8 的区别"></a>说一下 R8 和 D8 的区别</h4><h4 id="说一下如何对不同手机进行等级划分"><a href="#说一下如何对不同手机进行等级划分" class="headerlink" title="说一下如何对不同手机进行等级划分"></a>说一下如何对不同手机进行等级划分</h4><h4 id="说一下-ASM、AspectJ-和-AST-的区别"><a href="#说一下-ASM、AspectJ-和-AST-的区别" class="headerlink" title="说一下 ASM、AspectJ 和 AST 的区别"></a>说一下 ASM、AspectJ 和 AST 的区别</h4><h4 id="说一下你们项目的参数配置系统设计流程"><a href="#说一下你们项目的参数配置系统设计流程" class="headerlink" title="说一下你们项目的参数配置系统设计流程"></a>说一下你们项目的参数配置系统设计流程</h4><h4 id="如何自定义一个-gradle-Plugin"><a href="#如何自定义一个-gradle-Plugin" class="headerlink" title="如何自定义一个 gradle Plugin"></a>如何自定义一个 gradle Plugin</h4><h4 id="gradle-apk-打包流程"><a href="#gradle-apk-打包流程" class="headerlink" title="gradle apk 打包流程"></a>gradle apk 打包流程</h4><h4 id="gradle-Transfrom-方案"><a href="#gradle-Transfrom-方案" class="headerlink" title="gradle Transfrom 方案"></a>gradle Transfrom 方案</h4><h4 id="AOP-面向切面编程思想"><a href="#AOP-面向切面编程思想" class="headerlink" title="AOP 面向切面编程思想"></a>AOP 面向切面编程思想</h4><h4 id="字节码增强技术方案，比如-ASM，JAVAASSIST"><a href="#字节码增强技术方案，比如-ASM，JAVAASSIST" class="headerlink" title="字节码增强技术方案，比如 ASM，JAVAASSIST"></a>字节码增强技术方案，比如 ASM，JAVAASSIST</h4><h4 id="JAVA-源码生成技术方案-javapoet"><a href="#JAVA-源码生成技术方案-javapoet" class="headerlink" title="JAVA 源码生成技术方案 javapoet"></a>JAVA 源码生成技术方案 javapoet</h4><h4 id="Application-Activity-Service-BroadcaseRecive-ContentProvider-启动原理"><a href="#Application-Activity-Service-BroadcaseRecive-ContentProvider-启动原理" class="headerlink" title="Application,Activity,Service,BroadcaseRecive,ContentProvider 启动原理"></a>Application,Activity,Service,BroadcaseRecive,ContentProvider 启动原理</h4><h4 id="apk-解析安装过程"><a href="#apk-解析安装过程" class="headerlink" title="apk 解析安装过程"></a>apk 解析安装过程</h4><h4 id="Classloader-类加载机制"><a href="#Classloader-类加载机制" class="headerlink" title="Classloader 类加载机制"></a>Classloader 类加载机制</h4><h4 id="代理等设计模式"><a href="#代理等设计模式" class="headerlink" title="代理等设计模式"></a>代理等设计模式</h4><h4 id="有没有图片库的大内存监控"><a href="#有没有图片库的大内存监控" class="headerlink" title="有没有图片库的大内存监控"></a>有没有图片库的大内存监控</h4><h4 id="业务优化方面：表单方面用户填入的信息比较多，有没有从技术角度去优化"><a href="#业务优化方面：表单方面用户填入的信息比较多，有没有从技术角度去优化" class="headerlink" title="业务优化方面：表单方面用户填入的信息比较多，有没有从技术角度去优化"></a>业务优化方面：表单方面用户填入的信息比较多，有没有从技术角度去优化</h4><h4 id="收银在商场信号较差，网络方面的优化有没有做过"><a href="#收银在商场信号较差，网络方面的优化有没有做过" class="headerlink" title="收银在商场信号较差，网络方面的优化有没有做过"></a>收银在商场信号较差，网络方面的优化有没有做过</h4><h4 id="离线模式下如何避免真实数据同步问题"><a href="#离线模式下如何避免真实数据同步问题" class="headerlink" title="离线模式下如何避免真实数据同步问题"></a>离线模式下如何避免真实数据同步问题</h4><h4 id="第二个项目，视频新闻类，架构介绍和技术栈优化介绍一下"><a href="#第二个项目，视频新闻类，架构介绍和技术栈优化介绍一下" class="headerlink" title="第二个项目，视频新闻类，架构介绍和技术栈优化介绍一下"></a>第二个项目，视频新闻类，架构介绍和技术栈优化介绍一下</h4><h4 id="mpv-方面做了哪些优化"><a href="#mpv-方面做了哪些优化" class="headerlink" title="mpv 方面做了哪些优化"></a>mpv 方面做了哪些优化</h4><h4 id="mpv-内存泄露问题如何解决，持有-v"><a href="#mpv-内存泄露问题如何解决，持有-v" class="headerlink" title="mpv 内存泄露问题如何解决，持有 v"></a>mpv 内存泄露问题如何解决，持有 v</h4><h4 id="p-层有太多请求，业务复杂，如何简化"><a href="#p-层有太多请求，业务复杂，如何简化" class="headerlink" title="p 层有太多请求，业务复杂，如何简化"></a>p 层有太多请求，业务复杂，如何简化</h4><h4 id="mvvm-比-mpv-好在哪里嘞"><a href="#mvvm-比-mpv-好在哪里嘞" class="headerlink" title="mvvm 比 mpv 好在哪里嘞"></a>mvvm 比 mpv 好在哪里嘞</h4><h4 id="v-层怎么跟-m-层交互"><a href="#v-层怎么跟-m-层交互" class="headerlink" title="v 层怎么跟 m 层交互"></a>v 层怎么跟 m 层交互</h4><h4 id="弱网下，离开页面，会出现内存泄露或者-crash-问题吗"><a href="#弱网下，离开页面，会出现内存泄露或者-crash-问题吗" class="headerlink" title="弱网下，离开页面，会出现内存泄露或者 crash 问题吗"></a>弱网下，离开页面，会出现内存泄露或者 crash 问题吗</h4><h4 id="你用的-rxjava-熟悉吗？哪些场景下用的操作符记得吗"><a href="#你用的-rxjava-熟悉吗？哪些场景下用的操作符记得吗" class="headerlink" title="你用的 rxjava 熟悉吗？哪些场景下用的操作符记得吗"></a>你用的 rxjava 熟悉吗？哪些场景下用的操作符记得吗</h4><h4 id="你是哪些业务场景下用的这些操作符呢"><a href="#你是哪些业务场景下用的这些操作符呢" class="headerlink" title="你是哪些业务场景下用的这些操作符呢"></a>你是哪些业务场景下用的这些操作符呢</h4><h4 id="rxjava-zip-操作符"><a href="#rxjava-zip-操作符" class="headerlink" title="rxjava zip 操作符"></a>rxjava zip 操作符</h4><h4 id="okhttp-拦截器用过吗，在-okhttp-框架里是什么角色"><a href="#okhttp-拦截器用过吗，在-okhttp-框架里是什么角色" class="headerlink" title="okhttp 拦截器用过吗，在 okhttp 框架里是什么角色"></a>okhttp 拦截器用过吗，在 okhttp 框架里是什么角色</h4><h4 id="它自带了哪些拦截器"><a href="#它自带了哪些拦截器" class="headerlink" title="它自带了哪些拦截器"></a>它自带了哪些拦截器</h4><h4 id="你定义了什么拦截器，做什么用"><a href="#你定义了什么拦截器，做什么用" class="headerlink" title="你定义了什么拦截器，做什么用"></a>你定义了什么拦截器，做什么用</h4><h4 id="有没有对-okhttp-性能相关的监控和优化"><a href="#有没有对-okhttp-性能相关的监控和优化" class="headerlink" title="有没有对 okhttp 性能相关的监控和优化"></a>有没有对 okhttp 性能相关的监控和优化</h4><h4 id="okhttp-安全相关的"><a href="#okhttp-安全相关的" class="headerlink" title="okhttp 安全相关的"></a>okhttp 安全相关的</h4><h4 id="rxjava-retroft-okhttp-为什么用这个组合"><a href="#rxjava-retroft-okhttp-为什么用这个组合" class="headerlink" title="rxjava retroft okhttp 为什么用这个组合"></a>rxjava retroft okhttp 为什么用这个组合</h4><h4 id="retroft-是如何简化链路的"><a href="#retroft-是如何简化链路的" class="headerlink" title="retroft 是如何简化链路的"></a>retroft 是如何简化链路的</h4><h4 id="retroft-的注解是什么时期解析"><a href="#retroft-的注解是什么时期解析" class="headerlink" title="retroft 的注解是什么时期解析"></a>retroft 的注解是什么时期解析</h4><h4 id="页面秒开做过没"><a href="#页面秒开做过没" class="headerlink" title="页面秒开做过没"></a>页面秒开做过没</h4><h4 id="直播类，拉流推流怎么优化"><a href="#直播类，拉流推流怎么优化" class="headerlink" title="直播类，拉流推流怎么优化"></a>直播类，拉流推流怎么优化</h4><h4 id="优化项目结构，为什么要重构，做了什么工作？重构对业务上有什么提升"><a href="#优化项目结构，为什么要重构，做了什么工作？重构对业务上有什么提升" class="headerlink" title="优化项目结构，为什么要重构，做了什么工作？重构对业务上有什么提升"></a>优化项目结构，为什么要重构，做了什么工作？重构对业务上有什么提升</h4><h4 id="责任链模式、策略模式是什么，怎么用的"><a href="#责任链模式、策略模式是什么，怎么用的" class="headerlink" title="责任链模式、策略模式是什么，怎么用的"></a>责任链模式、策略模式是什么，怎么用的</h4><h4 id="mvp-说一下-mvp-和-mvc-的区别"><a href="#mvp-说一下-mvp-和-mvc-的区别" class="headerlink" title="mvp 说一下 mvp 和 mvc 的区别"></a>mvp 说一下 mvp 和 mvc 的区别</h4><h4 id="mvp-使用中的内存泄漏情况"><a href="#mvp-使用中的内存泄漏情况" class="headerlink" title="mvp 使用中的内存泄漏情况"></a>mvp 使用中的内存泄漏情况</h4><h4 id="网络请求在弱网情况下发出请求，在回调还没回来之前关闭掉-activity，此时如果回调回来是否会造成内存泄漏或者-crash？"><a href="#网络请求在弱网情况下发出请求，在回调还没回来之前关闭掉-activity，此时如果回调回来是否会造成内存泄漏或者-crash？" class="headerlink" title="网络请求在弱网情况下发出请求，在回调还没回来之前关闭掉 activity，此时如果回调回来是否会造成内存泄漏或者 crash？"></a>网络请求在弱网情况下发出请求，在回调还没回来之前关闭掉 activity，此时如果回调回来是否会造成内存泄漏或者 crash？</h4><h4 id="Rxjava-操作符，分别在哪些场景用到"><a href="#Rxjava-操作符，分别在哪些场景用到" class="headerlink" title="Rxjava 操作符，分别在哪些场景用到"></a>Rxjava 操作符，分别在哪些场景用到</h4><h4 id="okhttp-有哪些拦截器，作用是什么；自定义过哪些拦截器，用于什么场景？"><a href="#okhttp-有哪些拦截器，作用是什么；自定义过哪些拦截器，用于什么场景？" class="headerlink" title="okhttp 有哪些拦截器，作用是什么；自定义过哪些拦截器，用于什么场景？"></a>okhttp 有哪些拦截器，作用是什么；自定义过哪些拦截器，用于什么场景？</h4><h4 id="http-性能有哪些优化，比如流量监控"><a href="#http-性能有哪些优化，比如流量监控" class="headerlink" title="http 性能有哪些优化，比如流量监控"></a>http 性能有哪些优化，比如流量监控</h4><h4 id="okhttp-安全相关，如何防止抓包"><a href="#okhttp-安全相关，如何防止抓包" class="headerlink" title="okhttp 安全相关，如何防止抓包"></a>okhttp 安全相关，如何防止抓包</h4><h4 id="为什么用-Rxjava-retrofit-okhttp-的组合，出于什么角度考虑"><a href="#为什么用-Rxjava-retrofit-okhttp-的组合，出于什么角度考虑" class="headerlink" title="为什么用 Rxjava+retrofit+okhttp 的组合，出于什么角度考虑"></a>为什么用 Rxjava+retrofit+okhttp 的组合，出于什么角度考虑</h4><h4 id="页面秒开优化"><a href="#页面秒开优化" class="headerlink" title="页面秒开优化"></a>页面秒开优化</h4><h4 id="推流、拉流操作是否做过？"><a href="#推流、拉流操作是否做过？" class="headerlink" title="推流、拉流操作是否做过？"></a>推流、拉流操作是否做过？</h4><h4 id="为什么要重构？重构后有哪些提升？"><a href="#为什么要重构？重构后有哪些提升？" class="headerlink" title="为什么要重构？重构后有哪些提升？"></a>为什么要重构？重构后有哪些提升？</h4><h4 id="责任链模式和场景模式"><a href="#责任链模式和场景模式" class="headerlink" title="责任链模式和场景模式"></a>责任链模式和场景模式</h4><h4 id="kotlin-用的咋样，有什么好体验，不好体验"><a href="#kotlin-用的咋样，有什么好体验，不好体验" class="headerlink" title="kotlin 用的咋样，有什么好体验，不好体验"></a>kotlin 用的咋样，有什么好体验，不好体验</h4><h4 id="kotlin-对比-java-啥优点"><a href="#kotlin-对比-java-啥优点" class="headerlink" title="kotlin 对比 java 啥优点"></a>kotlin 对比 java 啥优点</h4><h4 id="handler-原理，内存泄漏"><a href="#handler-原理，内存泄漏" class="headerlink" title="handler 原理，内存泄漏"></a>handler 原理，内存泄漏</h4><h4 id="除了-handler-其它处理消息的方式，相对应的有哪些场景？"><a href="#除了-handler-其它处理消息的方式，相对应的有哪些场景？" class="headerlink" title="除了 handler 其它处理消息的方式，相对应的有哪些场景？"></a>除了 handler 其它处理消息的方式，相对应的有哪些场景？</h4><h4 id="git-用过哪些操作"><a href="#git-用过哪些操作" class="headerlink" title="git 用过哪些操作"></a>git 用过哪些操作</h4><h4 id="looper-咋停"><a href="#looper-咋停" class="headerlink" title="looper 咋停"></a>looper 咋停</h4><h4 id="如何优先处理消息"><a href="#如何优先处理消息" class="headerlink" title="如何优先处理消息"></a>如何优先处理消息</h4><h4 id="handler-内存泄漏如何去避免"><a href="#handler-内存泄漏如何去避免" class="headerlink" title="handler 内存泄漏如何去避免"></a>handler 内存泄漏如何去避免</h4><h4 id="处理消息的，除了用-handler-还用啥"><a href="#处理消息的，除了用-handler-还用啥" class="headerlink" title="处理消息的，除了用 handler 还用啥"></a>处理消息的，除了用 handler 还用啥</h4><h4 id="git-用过哪些命令"><a href="#git-用过哪些命令" class="headerlink" title="git 用过哪些命令"></a>git 用过哪些命令</h4><h4 id="工作中怎么学习的"><a href="#工作中怎么学习的" class="headerlink" title="工作中怎么学习的"></a>工作中怎么学习的</h4><h4 id="有什么技术让你觉得特别受用"><a href="#有什么技术让你觉得特别受用" class="headerlink" title="有什么技术让你觉得特别受用"></a>有什么技术让你觉得特别受用</h4><h4 id="对新技术有啥了解，flutter"><a href="#对新技术有啥了解，flutter" class="headerlink" title="对新技术有啥了解，flutter"></a>对新技术有啥了解，flutter</h4><h4 id="你对自己未来啥规划"><a href="#你对自己未来啥规划" class="headerlink" title="你对自己未来啥规划"></a>你对自己未来啥规划</h4><h4 id="DSL-一整套怎么做的。"><a href="#DSL-一整套怎么做的。" class="headerlink" title="DSL 一整套怎么做的。"></a>DSL 一整套怎么做的。</h4><h4 id="怎么做-CPU-优化。"><a href="#怎么做-CPU-优化。" class="headerlink" title="怎么做 CPU 优化。"></a>怎么做 CPU 优化。</h4><h4 id="你怎么设计一个线程框架。"><a href="#你怎么设计一个线程框架。" class="headerlink" title="你怎么设计一个线程框架。"></a>你怎么设计一个线程框架。</h4><h4 id="启动优化中你是怎么做的"><a href="#启动优化中你是怎么做的" class="headerlink" title="启动优化中你是怎么做的"></a>启动优化中你是怎么做的</h4><h4 id="ApplicationExtension-这个类的作用"><a href="#ApplicationExtension-这个类的作用" class="headerlink" title="ApplicationExtension 这个类的作用"></a>ApplicationExtension 这个类的作用</h4><h4 id="插件化"><a href="#插件化" class="headerlink" title="插件化"></a>插件化</h4><h4 id="热修复"><a href="#热修复" class="headerlink" title="热修复"></a>热修复</h4></article><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/zrmomo/images/main/image/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/03/26/Retrofit/" title=""><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info"></div></div></a></div><div class="next-post pull-right"><a href="/2024/03/26/%E6%8A%98%E5%8F%A0%E5%B1%8F%E9%80%82%E9%85%8D/" title=""><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info"></div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://raw.githubusercontent.com/zrmomo/images/main/image/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">狂奔的馒头</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">40</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="mailto:imcoddo@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%A3%80%E7%B4%A2"><span class="toc-number">1.</span> <span class="toc-text">检索</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.0.1.</span> <span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%A8%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.0.1.1.</span> <span class="toc-text">跨进程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E7%94%A8%E6%88%B7%E7%9A%84%E7%82%B9%E5%87%BB%E5%8A%A8%E4%BD%9C"><span class="toc-number">1.0.1.2.</span> <span class="toc-text">判断用户的点击动作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#activity%E7%A7%92%E5%BC%80"><span class="toc-number">1.0.1.3.</span> <span class="toc-text">activity秒开</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="toc-number">1.0.1.4.</span> <span class="toc-text">性能优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%8B%E7%BC%A9%E5%8C%85%E4%BD%93%E7%A7%AF"><span class="toc-number">1.0.1.5.</span> <span class="toc-text">压缩包体积</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#kotlin%E6%87%92%E5%8A%A0%E8%BD%BD"><span class="toc-number">1.0.1.6.</span> <span class="toc-text">kotlin懒加载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#View%E7%9A%84%E7%BB%98%E5%88%B6%E6%B5%81%E7%A8%8B"><span class="toc-number">1.0.1.7.</span> <span class="toc-text">View的绘制流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RecyclerView%E7%BC%93%E5%AD%98"><span class="toc-number">1.0.1.8.</span> <span class="toc-text">RecyclerView缓存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MVP%E3%80%81MVVM%E3%80%81MVI"><span class="toc-number">1.0.1.9.</span> <span class="toc-text">MVP、MVVM、MVI</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Activity%E5%90%AF%E5%8A%A8%E6%A8%A1%E5%BC%8F%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.0.1.10.</span> <span class="toc-text">Activity启动模式适用场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IM-%E6%98%AF%E5%A6%82%E4%BD%95%E4%BF%9D%E6%8C%81%E9%95%BF%E8%BF%9E%E6%8E%A5%E7%9A%84%EF%BC%9F"><span class="toc-number">1.0.1.11.</span> <span class="toc-text">IM 是如何保持长连接的？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IM-%E7%9A%84%E8%BF%87%E7%A8%8B%E4%B8%AD%E6%98%AF%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E5%AE%89%E5%85%A8%E7%9A%84%EF%BC%9F"><span class="toc-number">1.0.1.12.</span> <span class="toc-text">IM 的过程中是如何保证安全的？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E6%9C%AC%E5%9C%B0%E8%90%BD%E5%BA%93%E7%9A%84%E6%95%B0%E6%8D%AE%E4%B8%8D%E4%BC%9A%E8%A2%AB%E5%85%B6%E4%BB%96-App-%E6%88%96%E7%94%A8%E6%88%B7%E7%AF%A1%E6%94%B9%EF%BC%9F"><span class="toc-number">1.0.1.13.</span> <span class="toc-text">如何保证本地落库的数据不会被其他 App 或用户篡改？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TCP-%E6%98%AF%E5%8F%AF%E9%9D%A0%E7%9A%84%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BE%9D%E9%9D%A0-MQTT-%E4%BF%9D%E6%8C%81%E9%95%BF%E8%BF%9E%E6%8E%A5%EF%BC%9F"><span class="toc-number">1.0.1.14.</span> <span class="toc-text">TCP 是可靠的，为什么要依靠 MQTT 保持长连接？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%97%AE%E4%BA%86%E9%A1%B9%E7%9B%AE%E4%B8%AD%E5%9F%8B%E7%82%B9%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.0.1.15.</span> <span class="toc-text">问了项目中埋点的实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E4%BA%86%E6%96%B0%E7%9A%84%E5%9F%8B%E7%82%B9%E6%A1%86%E6%9E%B6%EF%BC%8C%E6%97%A7%E7%9A%84%E5%9F%8B%E7%82%B9%E4%BB%A3%E7%A0%81%E5%A6%82%E4%BD%95%E8%BF%81%E7%A7%BB"><span class="toc-number">1.0.1.16.</span> <span class="toc-text">实现了新的埋点框架，旧的埋点代码如何迁移</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%A0%E4%BB%AC%E6%98%AF%E5%A6%82%E4%BD%95%E5%81%9A%E7%BB%84%E4%BB%B6%E5%8C%96%E7%9A%84%EF%BC%9F%E4%BD%A0%E5%9C%A8%E9%87%8C%E9%9D%A2%E7%9A%84%E8%A7%92%E8%89%B2%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%E7%BB%84%E4%BB%B6%E6%98%AF%E6%80%8E%E4%B9%88%E6%8B%86%E5%88%86%E7%9A%84"><span class="toc-number">1.0.1.17.</span> <span class="toc-text">你们是如何做组件化的？你在里面的角色是什么？组件是怎么拆分的</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6%E4%B9%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3%EF%BC%9F"><span class="toc-number">1.0.1.18.</span> <span class="toc-text">组件之间的通信怎么解决？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8F%92%E4%BB%B6%E5%8C%96%E6%80%8E%E4%B9%88%E5%81%9A"><span class="toc-number">1.0.1.19.</span> <span class="toc-text">插件化怎么做</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA-apk-%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-number">1.0.1.20.</span> <span class="toc-text">构建 apk 的过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8%E6%9E%84%E5%BB%BA%E7%9A%84%E8%BF%87%E7%A8%8B%E4%B8%AD%E6%80%8E%E4%B9%88%E5%81%9A%E5%AD%97%E8%8A%82%E7%A0%81%E6%8F%92%E6%A1%A9"><span class="toc-number">1.0.1.21.</span> <span class="toc-text">在构建的过程中怎么做字节码插桩</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%81%9A-carsh-%E6%B2%BB%E7%90%86%E3%80%81%E5%A6%82%E4%BD%95%E7%9B%91%E6%8E%A7-java-%E5%92%8C-native-crash"><span class="toc-number">1.0.1.22.</span> <span class="toc-text">如何做 carsh 治理、如何监控 java 和 native crash</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Native-%E5%B8%B8%E8%A7%81%E7%9A%84-carsh-%E6%9C%89%E5%93%AA%E4%BA%9B"><span class="toc-number">1.0.1.23.</span> <span class="toc-text">Native 常见的 carsh 有哪些</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B4%E4%B8%80%E4%B8%8B-ANR-%E6%98%AF%E5%A6%82%E4%BD%95%E4%BA%A7%E7%94%9F%E7%9A%84"><span class="toc-number">1.0.1.24.</span> <span class="toc-text">说一下 ANR 是如何产生的</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#compileSDK-%E5%92%8C-targetSDKVersion-%E5%8C%BA%E5%88%AB"><span class="toc-number">1.0.1.25.</span> <span class="toc-text">compileSDK 和 targetSDKVersion 区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B4%E4%B8%80%E4%B8%8B%E4%BB%8A%E6%97%A5%E5%A4%B4%E6%9D%A1%E5%B1%8F%E5%B9%95%E9%80%82%E9%85%8D%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-number">1.0.1.26.</span> <span class="toc-text">说一下今日头条屏幕适配的原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B4%E4%B8%80%E4%B8%8B%E7%BB%84%E4%BB%B6%E5%8C%96%E8%B7%AF%E7%94%B1%E8%A1%A8%E5%BA%95%E5%B1%82%E6%80%8E%E4%B9%88%E5%81%9A%E7%9A%84"><span class="toc-number">1.0.1.27.</span> <span class="toc-text">说一下组件化路由表底层怎么做的</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B4%E4%B8%80%E4%B8%8B%E9%9A%90%E7%A7%81%E5%90%88%E8%A7%84%E4%BD%A0%E4%BB%AC%E6%94%B9%E4%BA%86%E5%93%AA%E4%BA%9B%E5%86%85%E5%AE%B9"><span class="toc-number">1.0.1.28.</span> <span class="toc-text">说一下隐私合规你们改了哪些内容</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B1%8F%E5%B9%95%E9%80%82%E9%85%8D-dp-%E5%92%8C-sp-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB-dins-%E5%B9%B2%E4%BB%80%E4%B9%88%E7%94%A8%E7%9A%84"><span class="toc-number">1.0.1.29.</span> <span class="toc-text">屏幕适配 dp 和 sp 有什么区别, dins 干什么用的</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B4%E4%B8%80%E4%B8%8B%E4%BD%A0%E4%BB%AC%E5%85%AC%E5%8F%B8%E9%99%8D%E7%BA%A7SDK%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84"><span class="toc-number">1.0.1.30.</span> <span class="toc-text">说一下你们公司降级SDK怎么实现的?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%A0%E4%BB%AC%E4%B8%80%E5%91%A8%E5%8F%91%E5%87%A0%E4%B8%AA%E7%89%88%E6%9C%AC-%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E4%B8%80%E5%91%A8%E4%B8%A4%E4%B8%AA%E7%89%88%E6%9C%AC%E4%B8%8D%E5%BD%B1%E5%93%8D%E5%AE%A2%E6%88%B7"><span class="toc-number">1.0.1.31.</span> <span class="toc-text">你们一周发几个版本, 怎么保证一周两个版本不影响客户</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B4%E4%B8%80%E4%B8%8B%E7%99%BD%E5%B1%8F%E7%9B%91%E6%B5%8B%E5%8E%9F%E7%90%86"><span class="toc-number">1.0.1.32.</span> <span class="toc-text">说一下白屏监测原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B4%E4%B8%80%E4%B8%8B-RecycleView-%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98"><span class="toc-number">1.0.1.33.</span> <span class="toc-text">说一下 RecycleView 三级缓存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B4%E4%B8%80%E4%B8%8B-R8-%E5%92%8C-D8-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.0.1.34.</span> <span class="toc-text">说一下 R8 和 D8 的区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B4%E4%B8%80%E4%B8%8B%E5%A6%82%E4%BD%95%E5%AF%B9%E4%B8%8D%E5%90%8C%E6%89%8B%E6%9C%BA%E8%BF%9B%E8%A1%8C%E7%AD%89%E7%BA%A7%E5%88%92%E5%88%86"><span class="toc-number">1.0.1.35.</span> <span class="toc-text">说一下如何对不同手机进行等级划分</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B4%E4%B8%80%E4%B8%8B-ASM%E3%80%81AspectJ-%E5%92%8C-AST-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.0.1.36.</span> <span class="toc-text">说一下 ASM、AspectJ 和 AST 的区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B4%E4%B8%80%E4%B8%8B%E4%BD%A0%E4%BB%AC%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%8F%82%E6%95%B0%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E6%B5%81%E7%A8%8B"><span class="toc-number">1.0.1.37.</span> <span class="toc-text">说一下你们项目的参数配置系统设计流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%87%AA%E5%AE%9A%E4%B9%89%E4%B8%80%E4%B8%AA-gradle-Plugin"><span class="toc-number">1.0.1.38.</span> <span class="toc-text">如何自定义一个 gradle Plugin</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gradle-apk-%E6%89%93%E5%8C%85%E6%B5%81%E7%A8%8B"><span class="toc-number">1.0.1.39.</span> <span class="toc-text">gradle apk 打包流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gradle-Transfrom-%E6%96%B9%E6%A1%88"><span class="toc-number">1.0.1.40.</span> <span class="toc-text">gradle Transfrom 方案</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AOP-%E9%9D%A2%E5%90%91%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3"><span class="toc-number">1.0.1.41.</span> <span class="toc-text">AOP 面向切面编程思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E7%A0%81%E5%A2%9E%E5%BC%BA%E6%8A%80%E6%9C%AF%E6%96%B9%E6%A1%88%EF%BC%8C%E6%AF%94%E5%A6%82-ASM%EF%BC%8CJAVAASSIST"><span class="toc-number">1.0.1.42.</span> <span class="toc-text">字节码增强技术方案，比如 ASM，JAVAASSIST</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#JAVA-%E6%BA%90%E7%A0%81%E7%94%9F%E6%88%90%E6%8A%80%E6%9C%AF%E6%96%B9%E6%A1%88-javapoet"><span class="toc-number">1.0.1.43.</span> <span class="toc-text">JAVA 源码生成技术方案 javapoet</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Application-Activity-Service-BroadcaseRecive-ContentProvider-%E5%90%AF%E5%8A%A8%E5%8E%9F%E7%90%86"><span class="toc-number">1.0.1.44.</span> <span class="toc-text">Application,Activity,Service,BroadcaseRecive,ContentProvider 启动原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#apk-%E8%A7%A3%E6%9E%90%E5%AE%89%E8%A3%85%E8%BF%87%E7%A8%8B"><span class="toc-number">1.0.1.45.</span> <span class="toc-text">apk 解析安装过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Classloader-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6"><span class="toc-number">1.0.1.46.</span> <span class="toc-text">Classloader 类加载机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%90%86%E7%AD%89%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.0.1.47.</span> <span class="toc-text">代理等设计模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E6%B2%A1%E6%9C%89%E5%9B%BE%E7%89%87%E5%BA%93%E7%9A%84%E5%A4%A7%E5%86%85%E5%AD%98%E7%9B%91%E6%8E%A7"><span class="toc-number">1.0.1.48.</span> <span class="toc-text">有没有图片库的大内存监控</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A1%E4%BC%98%E5%8C%96%E6%96%B9%E9%9D%A2%EF%BC%9A%E8%A1%A8%E5%8D%95%E6%96%B9%E9%9D%A2%E7%94%A8%E6%88%B7%E5%A1%AB%E5%85%A5%E7%9A%84%E4%BF%A1%E6%81%AF%E6%AF%94%E8%BE%83%E5%A4%9A%EF%BC%8C%E6%9C%89%E6%B2%A1%E6%9C%89%E4%BB%8E%E6%8A%80%E6%9C%AF%E8%A7%92%E5%BA%A6%E5%8E%BB%E4%BC%98%E5%8C%96"><span class="toc-number">1.0.1.49.</span> <span class="toc-text">业务优化方面：表单方面用户填入的信息比较多，有没有从技术角度去优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%94%B6%E9%93%B6%E5%9C%A8%E5%95%86%E5%9C%BA%E4%BF%A1%E5%8F%B7%E8%BE%83%E5%B7%AE%EF%BC%8C%E7%BD%91%E7%BB%9C%E6%96%B9%E9%9D%A2%E7%9A%84%E4%BC%98%E5%8C%96%E6%9C%89%E6%B2%A1%E6%9C%89%E5%81%9A%E8%BF%87"><span class="toc-number">1.0.1.50.</span> <span class="toc-text">收银在商场信号较差，网络方面的优化有没有做过</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A6%BB%E7%BA%BF%E6%A8%A1%E5%BC%8F%E4%B8%8B%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E7%9C%9F%E5%AE%9E%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E9%97%AE%E9%A2%98"><span class="toc-number">1.0.1.51.</span> <span class="toc-text">离线模式下如何避免真实数据同步问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E4%B8%AA%E9%A1%B9%E7%9B%AE%EF%BC%8C%E8%A7%86%E9%A2%91%E6%96%B0%E9%97%BB%E7%B1%BB%EF%BC%8C%E6%9E%B6%E6%9E%84%E4%BB%8B%E7%BB%8D%E5%92%8C%E6%8A%80%E6%9C%AF%E6%A0%88%E4%BC%98%E5%8C%96%E4%BB%8B%E7%BB%8D%E4%B8%80%E4%B8%8B"><span class="toc-number">1.0.1.52.</span> <span class="toc-text">第二个项目，视频新闻类，架构介绍和技术栈优化介绍一下</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#mpv-%E6%96%B9%E9%9D%A2%E5%81%9A%E4%BA%86%E5%93%AA%E4%BA%9B%E4%BC%98%E5%8C%96"><span class="toc-number">1.0.1.53.</span> <span class="toc-text">mpv 方面做了哪些优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#mpv-%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2%E9%97%AE%E9%A2%98%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%EF%BC%8C%E6%8C%81%E6%9C%89-v"><span class="toc-number">1.0.1.54.</span> <span class="toc-text">mpv 内存泄露问题如何解决，持有 v</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#p-%E5%B1%82%E6%9C%89%E5%A4%AA%E5%A4%9A%E8%AF%B7%E6%B1%82%EF%BC%8C%E4%B8%9A%E5%8A%A1%E5%A4%8D%E6%9D%82%EF%BC%8C%E5%A6%82%E4%BD%95%E7%AE%80%E5%8C%96"><span class="toc-number">1.0.1.55.</span> <span class="toc-text">p 层有太多请求，业务复杂，如何简化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#mvvm-%E6%AF%94-mpv-%E5%A5%BD%E5%9C%A8%E5%93%AA%E9%87%8C%E5%98%9E"><span class="toc-number">1.0.1.56.</span> <span class="toc-text">mvvm 比 mpv 好在哪里嘞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#v-%E5%B1%82%E6%80%8E%E4%B9%88%E8%B7%9F-m-%E5%B1%82%E4%BA%A4%E4%BA%92"><span class="toc-number">1.0.1.57.</span> <span class="toc-text">v 层怎么跟 m 层交互</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%B1%E7%BD%91%E4%B8%8B%EF%BC%8C%E7%A6%BB%E5%BC%80%E9%A1%B5%E9%9D%A2%EF%BC%8C%E4%BC%9A%E5%87%BA%E7%8E%B0%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2%E6%88%96%E8%80%85-crash-%E9%97%AE%E9%A2%98%E5%90%97"><span class="toc-number">1.0.1.58.</span> <span class="toc-text">弱网下，离开页面，会出现内存泄露或者 crash 问题吗</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%A0%E7%94%A8%E7%9A%84-rxjava-%E7%86%9F%E6%82%89%E5%90%97%EF%BC%9F%E5%93%AA%E4%BA%9B%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%94%A8%E7%9A%84%E6%93%8D%E4%BD%9C%E7%AC%A6%E8%AE%B0%E5%BE%97%E5%90%97"><span class="toc-number">1.0.1.59.</span> <span class="toc-text">你用的 rxjava 熟悉吗？哪些场景下用的操作符记得吗</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%A0%E6%98%AF%E5%93%AA%E4%BA%9B%E4%B8%9A%E5%8A%A1%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%94%A8%E7%9A%84%E8%BF%99%E4%BA%9B%E6%93%8D%E4%BD%9C%E7%AC%A6%E5%91%A2"><span class="toc-number">1.0.1.60.</span> <span class="toc-text">你是哪些业务场景下用的这些操作符呢</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#rxjava-zip-%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="toc-number">1.0.1.61.</span> <span class="toc-text">rxjava zip 操作符</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#okhttp-%E6%8B%A6%E6%88%AA%E5%99%A8%E7%94%A8%E8%BF%87%E5%90%97%EF%BC%8C%E5%9C%A8-okhttp-%E6%A1%86%E6%9E%B6%E9%87%8C%E6%98%AF%E4%BB%80%E4%B9%88%E8%A7%92%E8%89%B2"><span class="toc-number">1.0.1.62.</span> <span class="toc-text">okhttp 拦截器用过吗，在 okhttp 框架里是什么角色</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%83%E8%87%AA%E5%B8%A6%E4%BA%86%E5%93%AA%E4%BA%9B%E6%8B%A6%E6%88%AA%E5%99%A8"><span class="toc-number">1.0.1.63.</span> <span class="toc-text">它自带了哪些拦截器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%A0%E5%AE%9A%E4%B9%89%E4%BA%86%E4%BB%80%E4%B9%88%E6%8B%A6%E6%88%AA%E5%99%A8%EF%BC%8C%E5%81%9A%E4%BB%80%E4%B9%88%E7%94%A8"><span class="toc-number">1.0.1.64.</span> <span class="toc-text">你定义了什么拦截器，做什么用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E6%B2%A1%E6%9C%89%E5%AF%B9-okhttp-%E6%80%A7%E8%83%BD%E7%9B%B8%E5%85%B3%E7%9A%84%E7%9B%91%E6%8E%A7%E5%92%8C%E4%BC%98%E5%8C%96"><span class="toc-number">1.0.1.65.</span> <span class="toc-text">有没有对 okhttp 性能相关的监控和优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#okhttp-%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3%E7%9A%84"><span class="toc-number">1.0.1.66.</span> <span class="toc-text">okhttp 安全相关的</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#rxjava-retroft-okhttp-%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8%E8%BF%99%E4%B8%AA%E7%BB%84%E5%90%88"><span class="toc-number">1.0.1.67.</span> <span class="toc-text">rxjava retroft okhttp 为什么用这个组合</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#retroft-%E6%98%AF%E5%A6%82%E4%BD%95%E7%AE%80%E5%8C%96%E9%93%BE%E8%B7%AF%E7%9A%84"><span class="toc-number">1.0.1.68.</span> <span class="toc-text">retroft 是如何简化链路的</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#retroft-%E7%9A%84%E6%B3%A8%E8%A7%A3%E6%98%AF%E4%BB%80%E4%B9%88%E6%97%B6%E6%9C%9F%E8%A7%A3%E6%9E%90"><span class="toc-number">1.0.1.69.</span> <span class="toc-text">retroft 的注解是什么时期解析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A1%B5%E9%9D%A2%E7%A7%92%E5%BC%80%E5%81%9A%E8%BF%87%E6%B2%A1"><span class="toc-number">1.0.1.70.</span> <span class="toc-text">页面秒开做过没</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%B4%E6%92%AD%E7%B1%BB%EF%BC%8C%E6%8B%89%E6%B5%81%E6%8E%A8%E6%B5%81%E6%80%8E%E4%B9%88%E4%BC%98%E5%8C%96"><span class="toc-number">1.0.1.71.</span> <span class="toc-text">直播类，拉流推流怎么优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%98%E5%8C%96%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E9%87%8D%E6%9E%84%EF%BC%8C%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88%E5%B7%A5%E4%BD%9C%EF%BC%9F%E9%87%8D%E6%9E%84%E5%AF%B9%E4%B8%9A%E5%8A%A1%E4%B8%8A%E6%9C%89%E4%BB%80%E4%B9%88%E6%8F%90%E5%8D%87"><span class="toc-number">1.0.1.72.</span> <span class="toc-text">优化项目结构，为什么要重构，做了什么工作？重构对业务上有什么提升</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F%E3%80%81%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%8C%E6%80%8E%E4%B9%88%E7%94%A8%E7%9A%84"><span class="toc-number">1.0.1.73.</span> <span class="toc-text">责任链模式、策略模式是什么，怎么用的</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#mvp-%E8%AF%B4%E4%B8%80%E4%B8%8B-mvp-%E5%92%8C-mvc-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.0.1.74.</span> <span class="toc-text">mvp 说一下 mvp 和 mvc 的区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#mvp-%E4%BD%BF%E7%94%A8%E4%B8%AD%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E6%83%85%E5%86%B5"><span class="toc-number">1.0.1.75.</span> <span class="toc-text">mvp 使用中的内存泄漏情况</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82%E5%9C%A8%E5%BC%B1%E7%BD%91%E6%83%85%E5%86%B5%E4%B8%8B%E5%8F%91%E5%87%BA%E8%AF%B7%E6%B1%82%EF%BC%8C%E5%9C%A8%E5%9B%9E%E8%B0%83%E8%BF%98%E6%B2%A1%E5%9B%9E%E6%9D%A5%E4%B9%8B%E5%89%8D%E5%85%B3%E9%97%AD%E6%8E%89-activity%EF%BC%8C%E6%AD%A4%E6%97%B6%E5%A6%82%E6%9E%9C%E5%9B%9E%E8%B0%83%E5%9B%9E%E6%9D%A5%E6%98%AF%E5%90%A6%E4%BC%9A%E9%80%A0%E6%88%90%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E6%88%96%E8%80%85-crash%EF%BC%9F"><span class="toc-number">1.0.1.76.</span> <span class="toc-text">网络请求在弱网情况下发出请求，在回调还没回来之前关闭掉 activity，此时如果回调回来是否会造成内存泄漏或者 crash？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Rxjava-%E6%93%8D%E4%BD%9C%E7%AC%A6%EF%BC%8C%E5%88%86%E5%88%AB%E5%9C%A8%E5%93%AA%E4%BA%9B%E5%9C%BA%E6%99%AF%E7%94%A8%E5%88%B0"><span class="toc-number">1.0.1.77.</span> <span class="toc-text">Rxjava 操作符，分别在哪些场景用到</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#okhttp-%E6%9C%89%E5%93%AA%E4%BA%9B%E6%8B%A6%E6%88%AA%E5%99%A8%EF%BC%8C%E4%BD%9C%E7%94%A8%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9B%E8%87%AA%E5%AE%9A%E4%B9%89%E8%BF%87%E5%93%AA%E4%BA%9B%E6%8B%A6%E6%88%AA%E5%99%A8%EF%BC%8C%E7%94%A8%E4%BA%8E%E4%BB%80%E4%B9%88%E5%9C%BA%E6%99%AF%EF%BC%9F"><span class="toc-number">1.0.1.78.</span> <span class="toc-text">okhttp 有哪些拦截器，作用是什么；自定义过哪些拦截器，用于什么场景？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#http-%E6%80%A7%E8%83%BD%E6%9C%89%E5%93%AA%E4%BA%9B%E4%BC%98%E5%8C%96%EF%BC%8C%E6%AF%94%E5%A6%82%E6%B5%81%E9%87%8F%E7%9B%91%E6%8E%A7"><span class="toc-number">1.0.1.79.</span> <span class="toc-text">http 性能有哪些优化，比如流量监控</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#okhttp-%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3%EF%BC%8C%E5%A6%82%E4%BD%95%E9%98%B2%E6%AD%A2%E6%8A%93%E5%8C%85"><span class="toc-number">1.0.1.80.</span> <span class="toc-text">okhttp 安全相关，如何防止抓包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8-Rxjava-retrofit-okhttp-%E7%9A%84%E7%BB%84%E5%90%88%EF%BC%8C%E5%87%BA%E4%BA%8E%E4%BB%80%E4%B9%88%E8%A7%92%E5%BA%A6%E8%80%83%E8%99%91"><span class="toc-number">1.0.1.81.</span> <span class="toc-text">为什么用 Rxjava+retrofit+okhttp 的组合，出于什么角度考虑</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A1%B5%E9%9D%A2%E7%A7%92%E5%BC%80%E4%BC%98%E5%8C%96"><span class="toc-number">1.0.1.82.</span> <span class="toc-text">页面秒开优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%A8%E6%B5%81%E3%80%81%E6%8B%89%E6%B5%81%E6%93%8D%E4%BD%9C%E6%98%AF%E5%90%A6%E5%81%9A%E8%BF%87%EF%BC%9F"><span class="toc-number">1.0.1.83.</span> <span class="toc-text">推流、拉流操作是否做过？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E9%87%8D%E6%9E%84%EF%BC%9F%E9%87%8D%E6%9E%84%E5%90%8E%E6%9C%89%E5%93%AA%E4%BA%9B%E6%8F%90%E5%8D%87%EF%BC%9F"><span class="toc-number">1.0.1.84.</span> <span class="toc-text">为什么要重构？重构后有哪些提升？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%9C%BA%E6%99%AF%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.0.1.85.</span> <span class="toc-text">责任链模式和场景模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#kotlin-%E7%94%A8%E7%9A%84%E5%92%8B%E6%A0%B7%EF%BC%8C%E6%9C%89%E4%BB%80%E4%B9%88%E5%A5%BD%E4%BD%93%E9%AA%8C%EF%BC%8C%E4%B8%8D%E5%A5%BD%E4%BD%93%E9%AA%8C"><span class="toc-number">1.0.1.86.</span> <span class="toc-text">kotlin 用的咋样，有什么好体验，不好体验</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#kotlin-%E5%AF%B9%E6%AF%94-java-%E5%95%A5%E4%BC%98%E7%82%B9"><span class="toc-number">1.0.1.87.</span> <span class="toc-text">kotlin 对比 java 啥优点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#handler-%E5%8E%9F%E7%90%86%EF%BC%8C%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="toc-number">1.0.1.88.</span> <span class="toc-text">handler 原理，内存泄漏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%99%A4%E4%BA%86-handler-%E5%85%B6%E5%AE%83%E5%A4%84%E7%90%86%E6%B6%88%E6%81%AF%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%8C%E7%9B%B8%E5%AF%B9%E5%BA%94%E7%9A%84%E6%9C%89%E5%93%AA%E4%BA%9B%E5%9C%BA%E6%99%AF%EF%BC%9F"><span class="toc-number">1.0.1.89.</span> <span class="toc-text">除了 handler 其它处理消息的方式，相对应的有哪些场景？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#git-%E7%94%A8%E8%BF%87%E5%93%AA%E4%BA%9B%E6%93%8D%E4%BD%9C"><span class="toc-number">1.0.1.90.</span> <span class="toc-text">git 用过哪些操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#looper-%E5%92%8B%E5%81%9C"><span class="toc-number">1.0.1.91.</span> <span class="toc-text">looper 咋停</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BC%98%E5%85%88%E5%A4%84%E7%90%86%E6%B6%88%E6%81%AF"><span class="toc-number">1.0.1.92.</span> <span class="toc-text">如何优先处理消息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#handler-%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E5%A6%82%E4%BD%95%E5%8E%BB%E9%81%BF%E5%85%8D"><span class="toc-number">1.0.1.93.</span> <span class="toc-text">handler 内存泄漏如何去避免</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E6%B6%88%E6%81%AF%E7%9A%84%EF%BC%8C%E9%99%A4%E4%BA%86%E7%94%A8-handler-%E8%BF%98%E7%94%A8%E5%95%A5"><span class="toc-number">1.0.1.94.</span> <span class="toc-text">处理消息的，除了用 handler 还用啥</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#git-%E7%94%A8%E8%BF%87%E5%93%AA%E4%BA%9B%E5%91%BD%E4%BB%A4"><span class="toc-number">1.0.1.95.</span> <span class="toc-text">git 用过哪些命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E4%B8%AD%E6%80%8E%E4%B9%88%E5%AD%A6%E4%B9%A0%E7%9A%84"><span class="toc-number">1.0.1.96.</span> <span class="toc-text">工作中怎么学习的</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E4%BB%80%E4%B9%88%E6%8A%80%E6%9C%AF%E8%AE%A9%E4%BD%A0%E8%A7%89%E5%BE%97%E7%89%B9%E5%88%AB%E5%8F%97%E7%94%A8"><span class="toc-number">1.0.1.97.</span> <span class="toc-text">有什么技术让你觉得特别受用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%B9%E6%96%B0%E6%8A%80%E6%9C%AF%E6%9C%89%E5%95%A5%E4%BA%86%E8%A7%A3%EF%BC%8Cflutter"><span class="toc-number">1.0.1.98.</span> <span class="toc-text">对新技术有啥了解，flutter</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%A0%E5%AF%B9%E8%87%AA%E5%B7%B1%E6%9C%AA%E6%9D%A5%E5%95%A5%E8%A7%84%E5%88%92"><span class="toc-number">1.0.1.99.</span> <span class="toc-text">你对自己未来啥规划</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DSL-%E4%B8%80%E6%95%B4%E5%A5%97%E6%80%8E%E4%B9%88%E5%81%9A%E7%9A%84%E3%80%82"><span class="toc-number">1.0.1.100.</span> <span class="toc-text">DSL 一整套怎么做的。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E5%81%9A-CPU-%E4%BC%98%E5%8C%96%E3%80%82"><span class="toc-number">1.0.1.101.</span> <span class="toc-text">怎么做 CPU 优化。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%A0%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%E7%BA%BF%E7%A8%8B%E6%A1%86%E6%9E%B6%E3%80%82"><span class="toc-number">1.0.1.102.</span> <span class="toc-text">你怎么设计一个线程框架。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%B8%AD%E4%BD%A0%E6%98%AF%E6%80%8E%E4%B9%88%E5%81%9A%E7%9A%84"><span class="toc-number">1.0.1.103.</span> <span class="toc-text">启动优化中你是怎么做的</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ApplicationExtension-%E8%BF%99%E4%B8%AA%E7%B1%BB%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">1.0.1.104.</span> <span class="toc-text">ApplicationExtension 这个类的作用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8F%92%E4%BB%B6%E5%8C%96"><span class="toc-number">1.0.1.105.</span> <span class="toc-text">插件化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%83%AD%E4%BF%AE%E5%A4%8D"><span class="toc-number">1.0.1.106.</span> <span class="toc-text">热修复</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20Activity%20%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" title="无题">无题</a><time datetime="2024-03-26T11:10:09.256Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20ANR/" title="Android ANR">Android ANR</a><time datetime="2024-03-26T11:10:09.254Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20Fragment/" title="无题">无题</a><time datetime="2024-03-26T11:10:09.252Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20Handler%E6%9C%BA%E5%88%B6/" title="Android Handler消息机制">Android Handler消息机制</a><time datetime="2024-03-26T11:10:09.250Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/26/Android%20Jetpack/" title="Android JetPack">Android JetPack</a><time datetime="2024-03-26T11:10:09.249Z" title="发表于 2024-03-26 19:10:09">2024-03-26</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(()=>{
+  const getGiscusTheme = theme => {
+    return theme === 'dark' ? 'dark' : 'light'
+  }
+
+  const loadGiscus = () => {
+    const config = Object.assign({
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'zrmomo/comment',
+      'data-repo-id': 'R_kgDOLFdqRA',
+      'data-category-id': 'DIC_kwDOLFdqRM4CcdAM',
+      'data-mapping': 'pathname',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true
+    },null)
+
+    const ele = document.createElement('script')
+    for (let key in config) {
+      ele.setAttribute(key, config[key])
+    }
+    document.getElementById('giscus-wrap').appendChild(ele)
+  }
+
+  const changeGiscusTheme = theme => {
+    const sendMessage = message => {
+      const iframe = document.querySelector('iframe.giscus-frame')
+      if (!iframe) return
+      iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app')
+    }
+
+    sendMessage({
+      setConfig: {
+        theme: getGiscusTheme(theme)
+      }
+    });
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment= loadGiscus
+  }
+})()</script></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
